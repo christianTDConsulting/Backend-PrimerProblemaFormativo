@@ -106,6 +106,38 @@ async function getTlf(req, res){
   }
   
 }
+async function editarCliente(req, res) {
+  try {
+    const { id, nombre } = req.body; // Suponiendo que el ID y el nuevo número se envían en el cuerpo de la solicitud
+
+    // Verifica si el cliente existe
+    const clienteExistente = await db.clientes.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!clienteExistente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    // Actualiza el cliente
+    const updatedCliente = await db.clientes.update({
+      where: {
+        id: id,
+      },
+      data: {
+        nombre: nombre,
+      },
+    });
+
+    res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
+  } catch (error) {
+    console.error('Error al editar el cliente:', error);
+    res.status(500).json({ error: 'Error al editar el cliente' });
+  }
+}
+
 
 
 
@@ -114,5 +146,6 @@ module.exports = {
   getClienteById,
   crearCliente,
   deleteClientes,
-  getTlf
+  getTlf,
+  editarCliente
 };
