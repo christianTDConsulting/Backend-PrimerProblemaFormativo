@@ -1,6 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const clienteRouter = require('./routes/ClienteRoutes');
+//const bodyParser = require('body-parser');
+const clienteRouter = require('./routes/clienteRoutes');
 const tlfRouter = require('./routes/tlfRoutes');
 
 const cors = require('cors'); //para que permita request de un puerto con otro origen
