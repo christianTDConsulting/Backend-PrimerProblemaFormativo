@@ -51,6 +51,7 @@ function crearCliente(req, res) {
         try {
             const { nombre } = req.body; // Suponiendo que el nombre se envía en el cuerpo de la solicitud
             const newClient = yield (0, clienteService_1.createClienteService)(nombre);
+            console.log("works " + newClient);
             res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
         }
         catch (error) {

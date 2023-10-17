@@ -33,11 +33,12 @@ async function getClienteById(req: Request, res: Response) {
 // Crear un nuevo cliente
 async function crearCliente(req: Request, res: Response) {
   try {
+    
     const { nombre } = req.body; // Suponiendo que el nombre se envía en el cuerpo de la solicitud
-
     const newClient = await createClienteService(nombre);
-
+    console.log("works "+ newClient);
     res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
+
   } catch (error) {
     console.error('Error al crear el cliente:', error);
     res.status(500).json(error);

@@ -18,7 +18,7 @@ function getClienteByIdService(clienteId) {
 }
 exports.getClienteByIdService = getClienteByIdService;
 function createClienteService(nombre) {
-    database_1.default.clientes.create({
+    return database_1.default.clientes.create({
         data: {
             nombre: nombre,
         },

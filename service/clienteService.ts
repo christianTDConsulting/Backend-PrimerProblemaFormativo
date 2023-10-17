@@ -4,6 +4,7 @@ function getAllClientesService(){
     return  db.clientes.findMany();
 }
 function getClienteByIdService(clienteId:number){
+    
     return db.clientes.findUnique({
         where: {
           id: clienteId,
@@ -11,11 +12,14 @@ function getClienteByIdService(clienteId:number){
       });
 }
 function createClienteService(nombre:string){
-    db.clientes.create({
+   
+           
+   return db.clientes.create({
         data: {
           nombre: nombre,
         },
       });
+  
 }
 function deleteClienteService(id:number){
    return  db.clientes.delete({
