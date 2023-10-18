@@ -1,3 +1,4 @@
+import { clientes } from '@prisma/client';
 import db from '../database/database';
 
 function getAllClientesService(){
@@ -11,16 +12,19 @@ function getClienteByIdService(clienteId:number){
         },
       });
 }
-function createClienteService(nombre:string){
+function createClienteService(nuevoCliente:clientes){
    
            
    return db.clientes.create({
         data: {
-          nombre: nombre,
+          nombre: nuevoCliente.nombre,
+          email: nuevoCliente.email,
+          bio: nuevoCliente.bio,
+          nacimiento: nuevoCliente.nacimiento
         },
       });
-  
 }
+
 function deleteClienteService(id:number){
    return  db.clientes.delete({
         where: {
@@ -36,16 +40,21 @@ function getTelefonosService(id:number){
       });
       
 }
-function editarClienteService(id:number, nombre:string){
-    return db.clientes.update({
-        where: {
-          id: id,
-        },
-        data: {
-          nombre: nombre,
-        },
-      });
+function editarClienteService(clienteActualizado:clientes) {
+  return db.clientes.update({
+    where: {
+      id: clienteActualizado.id,
+    },
+    data: {
+      nombre: clienteActualizado.nombre,
+      email: clienteActualizado.email,
+      bio: clienteActualizado.bio,
+      nacimiento: clienteActualizado.nacimiento
+    },
+  });
+  
 }
+
 
 
 export {

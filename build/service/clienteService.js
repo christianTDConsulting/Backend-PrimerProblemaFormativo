@@ -17,10 +17,13 @@ function getClienteByIdService(clienteId) {
     });
 }
 exports.getClienteByIdService = getClienteByIdService;
-function createClienteService(nombre) {
+function createClienteService(nuevoCliente) {
     return database_1.default.clientes.create({
         data: {
-            nombre: nombre,
+            nombre: nuevoCliente.nombre,
+            email: nuevoCliente.email,
+            bio: nuevoCliente.bio,
+            nacimiento: nuevoCliente.nacimiento
         },
     });
 }
@@ -41,13 +44,16 @@ function getTelefonosService(id) {
     });
 }
 exports.getTelefonosService = getTelefonosService;
-function editarClienteService(id, nombre) {
+function editarClienteService(clienteActualizado) {
     return database_1.default.clientes.update({
         where: {
-            id: id,
+            id: clienteActualizado.id,
         },
         data: {
-            nombre: nombre,
+            nombre: clienteActualizado.nombre,
+            email: clienteActualizado.email,
+            bio: clienteActualizado.bio,
+            nacimiento: clienteActualizado.nacimiento
         },
     });
 }

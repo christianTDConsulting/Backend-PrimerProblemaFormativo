@@ -35,8 +35,10 @@ function getClienteById(req, res) {
             if (!cliente) {
                 res.status(404).json({ error: 'Cliente no encontrado' });
             }
-            console.log('Cliente obtenido con éxito');
-            res.status(200).json(cliente); // Envía el cliente como respuesta JSON
+            else {
+                console.log('Cliente obtenido con éxito');
+                res.status(200).json(cliente); // Envía el cliente como respuesta JSON
+            }
         }
         catch (error) {
             console.error('Error al obtener cliente ', error);
@@ -49,10 +51,14 @@ exports.getClienteById = getClienteById;
 function crearCliente(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { nombre } = req.body; // Suponiendo que el nombre se envía en el cuerpo de la solicitud
-            const newClient = yield (0, clienteService_1.createClienteService)(nombre);
-            console.log("works " + newClient);
-            res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
+            const nuevoCliente = req.body; // Suponiendo que el nombre se envía en el cuerpo de la solicitud
+            if (!nuevoCliente || !nuevoCliente.nombre || !nuevoCliente.email) {
+                res.status(400).json({ error: 'Campos requeridos faltantes' }); //lanzar return?
+            }
+            else {
+                const newClient = yield (0, clienteService_1.createClienteService)(nuevoCliente);
+                res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
+            }
         }
         catch (error) {
             console.error('Error al crear el cliente:', error);
@@ -102,14 +108,14 @@ exports.getTlf = getTlf;
 function editarCliente(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { id, nombre } = req.body; // Suponiendo que el ID y el nuevo número se envían en el cuerpo de la solicitud
+            const clienteActualizado = req.body; // Suponiendo que el ID y el nuevo número se envían en el cuerpo de la solicitud
             // Verifica si el cliente existe
-            const clienteExistente = yield (0, clienteService_1.getClienteByIdService)(id);
+            const clienteExistente = yield (0, clienteService_1.getClienteByIdService)(clienteActualizado.id);
             if (!clienteExistente) {
                 res.status(404).json({ error: 'Cliente no encontrado' });
             }
             // Actualiza el cliente
-            const updatedCliente = yield (0, clienteService_1.editarClienteService)(id, nombre);
+            const updatedCliente = yield (0, clienteService_1.editarClienteService)(clienteActualizado);
             res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
         }
         catch (error) {
