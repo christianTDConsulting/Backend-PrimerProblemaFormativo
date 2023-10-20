@@ -116,4 +116,5 @@ export {
   deleteClientes,
   getTlf,
   editarCliente,
+  
 };

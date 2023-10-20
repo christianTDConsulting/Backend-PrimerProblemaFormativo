@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllTelefonosService, getTelefonoByNumberService, createTelefonoService, deleteTelefonoService} from '../service/tlfService';
+import { getAllTelefonosService, getTelefonoByNumberIdService, createTelefonoService, deleteTelefonoService, editTelefonosService} from '../service/tlfService';
 import { getClienteByIdService } from '../service/clienteService';
 async function getAllTelefonos(_req: Request, res: Response) {
   try {
@@ -14,10 +14,10 @@ async function getAllTelefonos(_req: Request, res: Response) {
 
 async function getCliente(req: Request, res: Response) {
   try {
-    const numero = req.params.numero;
-    console.log(numero);
+    const id = req.params.id;
+    console.log(id);
 
-    const telefono = await getTelefonoByNumberService(numero);
+    const telefono = await getTelefonoByNumberIdService(parseInt(id));
 
     if (!telefono) {
        res.status(404).json({ error: 'Teléfono no encontrado' });
@@ -55,9 +55,9 @@ async function crearTelefono(req: Request, res: Response) {
 
 async function deleteTelefono(req: Request, res: Response) {
   try {
-    const { numero } = req.body; // Suponiendo que el número se envía en el cuerpo de la solicitud
+    const { id } = req.body; // Suponiendo que el número se envía en el cuerpo de la solicitud
 
-    const deletedTLF = await deleteTelefonoService(numero);
+    const deletedTLF = await deleteTelefonoService(id);
 
     if (deletedTLF) {
        res.status(200).json({ message: 'Teléfono eliminado con éxito' });
@@ -69,5 +69,21 @@ async function deleteTelefono(req: Request, res: Response) {
      res.status(500).json({ error: 'Error al eliminar el teléfono' });
   }
 }
-
-export { getAllTelefonos, getCliente, crearTelefono, deleteTelefono };
+async function editTelefonos(req: Request, res: Response) {
+  try {
+    const tlfActualizado = req.body; // Suponiendo que el número se envío en el cuerpo de la solicitud
+    //Verifica si el telefono existe
+    const telefonoExistente = await getTelefonoByNumberIdService(tlfActualizado.id);
+    if (!telefonoExistente){
+      res.status(404).json({ error: 'Telefono no encontrado' });
+    }
+    //Actualiza el telefono 
+    const updatedCliente = await editTelefonosService(tlfActualizado);
+    res.status(404).json(updatedCliente);
+  } catch (error) {
+    console.error('Error al editar el telefono:', error);
+     res.status(500).json({ error: 'Error al editar el telefono' });
+  }
+  
+}
+export { getAllTelefonos, getCliente, crearTelefono, deleteTelefono, editTelefonos };

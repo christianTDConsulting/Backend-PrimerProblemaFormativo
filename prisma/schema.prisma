@@ -17,7 +17,8 @@ model clientes {
 }
 
 model telefonos {
-  numero     String   @id @db.VarChar(15)
+  id         Int      @id @default(autoincrement())
+  numero     String   @db.VarChar(15)
   id_cliente Int      @default(0)
   clientes   clientes @relation(fields: [id_cliente], references: [id], onDelete: Cascade, map: "FK__clientes")
 

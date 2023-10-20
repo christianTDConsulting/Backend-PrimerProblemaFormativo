@@ -1,3 +1,4 @@
+import { telefonos } from '@prisma/client';
 import db from '../database/database';
 
 function getAllTelefonosService() {
@@ -9,11 +10,11 @@ function getAllTelefonosService() {
       throw error;
     }
 }
-function getTelefonoByNumberService(number: string) {
+function getTelefonoByNumberIdService(id: number) {
     try{
         return db.telefonos.findUnique({
             where: {
-                numero: number,
+                id: id,
             },
         });
     } catch(error){
@@ -34,11 +35,11 @@ function createTelefonoService(number: string, cliente: number) {
         throw error;
     }
 }
-function deleteTelefonoService(numero: string) {
+function deleteTelefonoService(id: number) {
     try{
         return db.telefonos.delete({
             where: {
-                numero: numero,
+                id: id,
             },
         });
     }
@@ -46,13 +47,32 @@ function deleteTelefonoService(numero: string) {
         console.error('Error al eliminar el teléfono:', error);
         throw error;
     }
-   
+
+}
+function editTelefonosService(telefono:telefonos) {
+    try{
+        return db.telefonos.update({
+            where: {
+                id: telefono.id,
+            },
+            data: {
+                numero: telefono.numero,
+                id_cliente: telefono.id_cliente,
+            },
+        });
+    }
+    catch(error){
+        console.error('Error al editar el telefono:', error);
+        throw error;
+    }
+
 }
 
 
 export {
     getAllTelefonosService,
-    getTelefonoByNumberService,
+    getTelefonoByNumberIdService,
     createTelefonoService,
-    deleteTelefonoService
+    deleteTelefonoService,
+    editTelefonosService
 };

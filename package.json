@@ -7,7 +7,8 @@
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:pull": "npx prisma db pull",
-    "prisma:generate": "npx prisma generate"
+    "prisma:generate": "npx prisma generate",
+    "open" : "npx nodemon build/app.js"
   },
   "keywords": [],
   "author": "",

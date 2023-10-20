@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTelefono = exports.crearTelefono = exports.getCliente = exports.getAllTelefonos = void 0;
+exports.editTelefonos = exports.deleteTelefono = exports.crearTelefono = exports.getCliente = exports.getAllTelefonos = void 0;
 const tlfService_1 = require("../service/tlfService");
 const clienteService_1 = require("../service/clienteService");
 function getAllTelefonos(_req, res) {
@@ -29,9 +29,9 @@ exports.getAllTelefonos = getAllTelefonos;
 function getCliente(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const numero = req.params.numero;
-            console.log(numero);
-            const telefono = yield (0, tlfService_1.getTelefonoByNumberService)(numero);
+            const id = req.params.id;
+            console.log(id);
+            const telefono = yield (0, tlfService_1.getTelefonoByNumberIdService)(parseInt(id));
             if (!telefono) {
                 res.status(404).json({ error: 'Teléfono no encontrado' });
             }
@@ -68,8 +68,8 @@ exports.crearTelefono = crearTelefono;
 function deleteTelefono(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { numero } = req.body; // Suponiendo que el número se envía en el cuerpo de la solicitud
-            const deletedTLF = yield (0, tlfService_1.deleteTelefonoService)(numero);
+            const { id } = req.body; // Suponiendo que el número se envía en el cuerpo de la solicitud
+            const deletedTLF = yield (0, tlfService_1.deleteTelefonoService)(id);
             if (deletedTLF) {
                 res.status(200).json({ message: 'Teléfono eliminado con éxito' });
             }
@@ -84,3 +84,23 @@ function deleteTelefono(req, res) {
     });
 }
 exports.deleteTelefono = deleteTelefono;
+function editTelefonos(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const tlfActualizado = req.body; // Suponiendo que el número se envío en el cuerpo de la solicitud
+            //Verifica si el telefono existe
+            const telefonoExistente = yield (0, tlfService_1.getTelefonoByNumberIdService)(tlfActualizado.id);
+            if (!telefonoExistente) {
+                res.status(404).json({ error: 'Telefono no encontrado' });
+            }
+            //Actualiza el telefono 
+            const updatedCliente = yield (0, tlfService_1.editTelefonosService)(tlfActualizado);
+            res.status(404).json(updatedCliente);
+        }
+        catch (error) {
+            console.error('Error al editar el telefono:', error);
+            res.status(500).json({ error: 'Error al editar el telefono' });
+        }
+    });
+}
+exports.editTelefonos = editTelefonos;
