@@ -9,10 +9,10 @@ datasource db {
 
 model clientes {
   id         Int         @id @default(autoincrement())
-  nombre     String     @db.VarChar(50)
-  email      String      @db.VarChar(50)
-  bio        String     @db.VarChar(200)
-  nacimiento Date   @db.Date
+  nombre     String?     @db.VarChar(50)
+  email      String      @unique(map: "email") @db.VarChar(50)
+  bio        String?     @db.VarChar(200)
+  nacimiento DateTime    @db.Date
   telefonos  telefonos[]
 }
 
