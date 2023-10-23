@@ -43,7 +43,7 @@ async function crearCliente(req: Request, res: Response) {
        res.status(400).json({ error: 'Campos requeridos faltantes' }); //lanzar return?
     }else{
       const newClient = await createClienteService(nuevoCliente);
-      res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
+      res.status(200).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
     }
 
 

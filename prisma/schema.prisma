@@ -17,10 +17,21 @@ model clientes {
 }
 
 model telefonos {
-  id         Int      @id @default(autoincrement())
-  numero     String   @db.VarChar(15)
-  id_cliente Int      @default(0)
-  clientes   clientes @relation(fields: [id_cliente], references: [id], onDelete: Cascade, map: "FK__clientes")
+  id         Int        @id @default(autoincrement())
+  numero     String     @db.VarChar(15)
+  id_cliente Int        @default(0)
+  consumos   consumos[]
+  clientes   clientes   @relation(fields: [id_cliente], references: [id], onDelete: Cascade, map: "FK__clientes")
 
   @@index([id_cliente], map: "FK__clientes")
+}
+
+model consumos {
+  id          Int       @id @default(autoincrement())
+  id_telefono Int
+  consumo     Float     @default(0)
+  fecha       DateTime  @db.Date
+  telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_gastos_telefonos")
+
+  @@index([id_telefono], map: "FK_gastos_telefonos")
 }

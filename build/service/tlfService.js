@@ -1,13 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editTelefonosService = exports.deleteTelefonoService = exports.createTelefonoService = exports.getTelefonoByNumberIdService = exports.getAllTelefonosService = void 0;
-const database_1 = __importDefault(require("../database/database"));
+const database_1 = require("../database/database");
 function getAllTelefonosService() {
     try {
-        return database_1.default.telefonos.findMany();
+        return database_1.db.telefonos.findMany();
     }
     catch (error) {
         console.error('Error al obtener teléfonos:', error);
@@ -17,7 +14,7 @@ function getAllTelefonosService() {
 exports.getAllTelefonosService = getAllTelefonosService;
 function getTelefonoByNumberIdService(id) {
     try {
-        return database_1.default.telefonos.findUnique({
+        return database_1.db.telefonos.findUnique({
             where: {
                 id: id,
             },
@@ -31,7 +28,7 @@ function getTelefonoByNumberIdService(id) {
 exports.getTelefonoByNumberIdService = getTelefonoByNumberIdService;
 function createTelefonoService(number, cliente) {
     try {
-        return database_1.default.telefonos.create({
+        return database_1.db.telefonos.create({
             data: {
                 numero: number,
                 id_cliente: cliente,
@@ -46,7 +43,7 @@ function createTelefonoService(number, cliente) {
 exports.createTelefonoService = createTelefonoService;
 function deleteTelefonoService(id) {
     try {
-        return database_1.default.telefonos.delete({
+        return database_1.db.telefonos.delete({
             where: {
                 id: id,
             },
@@ -60,7 +57,7 @@ function deleteTelefonoService(id) {
 exports.deleteTelefonoService = deleteTelefonoService;
 function editTelefonosService(telefono) {
     try {
-        return database_1.default.telefonos.update({
+        return database_1.db.telefonos.update({
             where: {
                 id: telefono.id,
             },

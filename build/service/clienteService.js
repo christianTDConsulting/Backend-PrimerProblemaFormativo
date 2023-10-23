@@ -1,16 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editarClienteService = exports.getTelefonosService = exports.deleteClienteService = exports.createClienteService = exports.getClienteByIdService = exports.getAllClientesService = void 0;
-const database_1 = __importDefault(require("../database/database"));
+const database_1 = require("../database/database");
 function getAllClientesService() {
-    return database_1.default.clientes.findMany();
+    return database_1.db.clientes.findMany();
 }
 exports.getAllClientesService = getAllClientesService;
 function getClienteByIdService(clienteId) {
-    return database_1.default.clientes.findUnique({
+    return database_1.db.clientes.findUnique({
         where: {
             id: clienteId,
         },
@@ -19,7 +16,7 @@ function getClienteByIdService(clienteId) {
 exports.getClienteByIdService = getClienteByIdService;
 function createClienteService(nuevoCliente) {
     try {
-        const cliente = database_1.default.clientes.create({
+        const cliente = database_1.db.clientes.create({
             data: {
                 nombre: nuevoCliente.nombre,
                 email: nuevoCliente.email,
@@ -38,7 +35,7 @@ function createClienteService(nuevoCliente) {
 exports.createClienteService = createClienteService;
 function deleteClienteService(id) {
     try {
-        return database_1.default.clientes.delete({
+        return database_1.db.clientes.delete({
             where: {
                 id: id,
             },
@@ -52,7 +49,7 @@ function deleteClienteService(id) {
 exports.deleteClienteService = deleteClienteService;
 function getTelefonosService(id) {
     try {
-        return database_1.default.telefonos.findMany({
+        return database_1.db.telefonos.findMany({
             where: {
                 id_cliente: id,
             },
@@ -66,7 +63,7 @@ function getTelefonosService(id) {
 exports.getTelefonosService = getTelefonosService;
 function editarClienteService(clienteActualizado) {
     try {
-        return database_1.default.clientes.update({
+        return database_1.db.clientes.update({
             where: {
                 id: clienteActualizado.id,
             },

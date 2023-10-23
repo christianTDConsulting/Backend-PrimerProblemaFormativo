@@ -57,7 +57,7 @@ function crearCliente(req, res) {
             }
             else {
                 const newClient = yield (0, clienteService_1.createClienteService)(nuevoCliente);
-                res.status(201).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
+                res.status(200).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
             }
         }
         catch (error) {

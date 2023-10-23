@@ -1,6 +1,7 @@
 import express from 'express';
 import clienteRouter from './routes/clienteRoutes';
 import tlfRouter from './routes/tlfRoutes';
+import consumoRouter from './routes/consumoRoutes';
 import cors from 'cors';
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/', clienteRouter);
 app.use('/', tlfRouter);
+app.use ('/', consumoRouter);
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);
