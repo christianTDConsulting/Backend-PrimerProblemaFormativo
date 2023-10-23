@@ -114,9 +114,11 @@ function editarCliente(req, res) {
             if (!clienteExistente) {
                 res.status(404).json({ error: 'Cliente no encontrado' });
             }
-            // Actualiza el cliente
-            const updatedCliente = yield (0, clienteService_1.editarClienteService)(clienteActualizado);
-            res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
+            else {
+                // Actualiza el cliente
+                const updatedCliente = yield (0, clienteService_1.editarClienteService)(clienteActualizado);
+                res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
+            }
         }
         catch (error) {
             console.error('Error al editar el cliente:', error);

@@ -76,10 +76,11 @@ async function editTelefonos(req: Request, res: Response) {
     const telefonoExistente = await getTelefonoByNumberIdService(tlfActualizado.id);
     if (!telefonoExistente){
       res.status(404).json({ error: 'Telefono no encontrado' });
-    }
+    }else{
     //Actualiza el telefono 
     const updatedCliente = await editTelefonosService(tlfActualizado);
-    res.status(404).json(updatedCliente);
+    res.status(200).json(updatedCliente);
+    }
   } catch (error) {
     console.error('Error al editar el telefono:', error);
      res.status(500).json({ error: 'Error al editar el telefono' });

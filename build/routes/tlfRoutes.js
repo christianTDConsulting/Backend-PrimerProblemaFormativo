@@ -10,4 +10,5 @@ tlfRouter.get('/telefonos', tlfController_1.getAllTelefonos);
 tlfRouter.get('/telefonos/:numero/cliente', tlfController_1.getCliente);
 tlfRouter.post('/telefonos', tlfController_1.crearTelefono);
 tlfRouter.delete('/telefonos', tlfController_1.deleteTelefono);
+tlfRouter.put('/telefonos', tlfController_1.editTelefonos);
 exports.default = tlfRouter;

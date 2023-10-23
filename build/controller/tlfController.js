@@ -93,9 +93,11 @@ function editTelefonos(req, res) {
             if (!telefonoExistente) {
                 res.status(404).json({ error: 'Telefono no encontrado' });
             }
-            //Actualiza el telefono 
-            const updatedCliente = yield (0, tlfService_1.editTelefonosService)(tlfActualizado);
-            res.status(404).json(updatedCliente);
+            else {
+                //Actualiza el telefono 
+                const updatedCliente = yield (0, tlfService_1.editTelefonosService)(tlfActualizado);
+                res.status(200).json(updatedCliente);
+            }
         }
         catch (error) {
             console.error('Error al editar el telefono:', error);
