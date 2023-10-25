@@ -130,7 +130,6 @@ function getConsumoAnual(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { year, id_telefono } = req.body;
-            console.log("OJO" + year + id_telefono);
             if (!year || !id_telefono) {
                 res.status(400).json({ error: 'La fecha es un campo requerido' });
             }

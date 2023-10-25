@@ -49,11 +49,19 @@ function deleteConsumoService(id:number){
     }
 }
 function getConsumoByTelefonoService(id:number){
-    return db.consumos.findMany({
-        where: {
-            id_telefono: id,
-        },
-    });
+    try{
+        return db.consumos.findMany({
+            where: {
+                id_telefono: id,
+            },
+            orderBy: {
+                fecha: 'asc', // Ordenar por fecha ascendente
+            },
+        });
+    }catch(error){
+        console.log(error);
+        throw error;
+    }
 }
 
 function getConsumoPorYearService(year:number, id_telefono:number){

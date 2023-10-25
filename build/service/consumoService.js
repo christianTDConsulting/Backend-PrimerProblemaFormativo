@@ -57,11 +57,20 @@ function deleteConsumoService(id) {
 }
 exports.deleteConsumoService = deleteConsumoService;
 function getConsumoByTelefonoService(id) {
-    return database_1.db.consumos.findMany({
-        where: {
-            id_telefono: id,
-        },
-    });
+    try {
+        return database_1.db.consumos.findMany({
+            where: {
+                id_telefono: id,
+            },
+            orderBy: {
+                fecha: 'asc', // Ordenar por fecha ascendente
+            },
+        });
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
 }
 exports.getConsumoByTelefonoService = getConsumoByTelefonoService;
 function getConsumoPorYearService(year, id_telefono) {
