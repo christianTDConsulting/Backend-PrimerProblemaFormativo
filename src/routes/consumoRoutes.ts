@@ -1,5 +1,13 @@
 import express, { Router } from 'express';
-import { getAllConsumo, getConsumoById, crearConsumo, deleteConsumo, getConsumoClientes, getConsumoTelefonos, getConsumoAnual
+import { 
+    getAllConsumo, 
+    getConsumoById, 
+    crearConsumo, 
+    deleteConsumo, 
+    getConsumoClientes, 
+    getConsumoTelefonos, 
+    getConsumoAnual,
+    updateConsumo
 
 } from '../controller/consumoController'; // Importa el servicio de cliente
 
@@ -18,6 +26,8 @@ consumoRouter.get('/consumos/clientes/:cliente', getConsumoClientes);
 consumoRouter.get('/consumos/telefonos/:telefono', getConsumoTelefonos);
 
 consumoRouter.get('/consumosAnual/', getConsumoAnual);
+
+consumoRouter.put('/consumos',updateConsumo)
 
 
 

@@ -13,4 +13,5 @@ consumoRouter.delete('/consumos', consumoController_1.deleteConsumo);
 consumoRouter.get('/consumos/clientes/:cliente', consumoController_1.getConsumoClientes);
 consumoRouter.get('/consumos/telefonos/:telefono', consumoController_1.getConsumoTelefonos);
 consumoRouter.get('/consumosAnual/', consumoController_1.getConsumoAnual);
+consumoRouter.put('/consumos', consumoController_1.updateConsumo);
 exports.default = consumoRouter;

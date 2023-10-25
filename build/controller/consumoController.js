@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConsumoAnual = exports.getConsumoTelefonos = exports.getConsumoClientes = exports.deleteConsumo = exports.crearConsumo = exports.getConsumoById = exports.getAllConsumo = void 0;
+exports.updateConsumo = exports.getConsumoAnual = exports.getConsumoTelefonos = exports.getConsumoClientes = exports.deleteConsumo = exports.crearConsumo = exports.getConsumoById = exports.getAllConsumo = void 0;
 const consumoService_1 = require("../service/consumoService");
 const clienteService_1 = require("../service/clienteService");
 function getAllConsumo(_req, res) {
@@ -147,3 +147,25 @@ function getConsumoAnual(req, res) {
     });
 }
 exports.getConsumoAnual = getConsumoAnual;
+function updateConsumo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const consumoActualizado = req.body;
+            // Verifica si el consumo existe
+            const consumoExistente = yield (0, consumoService_1.getConsumoByIdService)(consumoActualizado.id);
+            if (!consumoExistente) {
+                res.status(404).json({ error: 'Consumo no encontrado' });
+            }
+            else {
+                // Actualiza el consumo
+                const updatedConsumo = yield (0, consumoService_1.updateConsumoService)(consumoActualizado);
+                res.status(200).json(updatedConsumo); // Devuelve el cliente actualizado como respuesta JSON
+            }
+        }
+        catch (error) {
+            console.error('Error al editar el consumo:', error);
+            res.status(500).json({ error: 'Error al editar el consumo' });
+        }
+    });
+}
+exports.updateConsumo = updateConsumo;

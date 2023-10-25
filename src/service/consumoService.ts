@@ -96,11 +96,30 @@ function getConsumoPorYearService(year:number, id_telefono:number){
     }
     
 }
+function updateConsumoService(nuevoConsumo:consumos){
+    try{
+        return db.consumos.update({
+            where: {
+                id: nuevoConsumo.id,
+            },
+            data: {
+                id_telefono: nuevoConsumo.id_telefono,
+                consumo: nuevoConsumo.consumo,
+                fecha: nuevoConsumo.fecha
+            }
+        });
+    }catch(error){
+        console.log(error);
+        throw error;
+    }
+}
+
 export{
     getAllConsumoService,
     getConsumoByIdService,
     createConsumoService,
     deleteConsumoService,
     getConsumoByTelefonoService,
-    getConsumoPorYearService
+    getConsumoPorYearService,
+    updateConsumoService
 }

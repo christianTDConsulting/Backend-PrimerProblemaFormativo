@@ -4,7 +4,10 @@ import {getAllConsumoService,
         createConsumoService, 
         deleteConsumoService, 
         getConsumoByTelefonoService,
-        getConsumoPorYearService} from '../service/consumoService';
+        getConsumoPorYearService,
+        updateConsumoService
+    } from '../service/consumoService';
+
 import { getTelefonosService } from '../service/clienteService';
 async function getAllConsumo(_req:Request, res: Response){
     try{
@@ -119,7 +122,27 @@ async function getConsumoAnual(req: Request, res: Response) {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 }
-
+async function updateConsumo(req:Request, res: Response){
+    try {
+        const consumoActualizado = req.body; 
+    
+        // Verifica si el consumo existe
+        const consumoExistente = await getConsumoByIdService(consumoActualizado.id)
+    
+        if (!consumoExistente) {
+           res.status(404).json({ error: 'Consumo no encontrado' });
+        }else{
+    
+        // Actualiza el consumo
+        const updatedConsumo = await updateConsumoService(consumoActualizado);
+    
+        res.status(200).json(updatedConsumo); // Devuelve el cliente actualizado como respuesta JSON
+        }
+      } catch (error) {
+        console.error('Error al editar el consumo:', error);
+         res.status(500).json({ error: 'Error al editar el consumo' });
+      }
+}
 
 
 export{
@@ -129,7 +152,8 @@ export{
     deleteConsumo,
     getConsumoClientes,
     getConsumoTelefonos,
-    getConsumoAnual
+    getConsumoAnual,
+    updateConsumo
     
 
 }

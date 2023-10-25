@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConsumoPorYearService = exports.getConsumoByTelefonoService = exports.deleteConsumoService = exports.createConsumoService = exports.getConsumoByIdService = exports.getAllConsumoService = void 0;
+exports.updateConsumoService = exports.getConsumoPorYearService = exports.getConsumoByTelefonoService = exports.deleteConsumoService = exports.createConsumoService = exports.getConsumoByIdService = exports.getAllConsumoService = void 0;
 const database_1 = require("../database/database");
 function getAllConsumoService() {
     try {
@@ -101,3 +101,22 @@ function getConsumoPorYearService(year, id_telefono) {
     }
 }
 exports.getConsumoPorYearService = getConsumoPorYearService;
+function updateConsumoService(nuevoConsumo) {
+    try {
+        return database_1.db.consumos.update({
+            where: {
+                id: nuevoConsumo.id,
+            },
+            data: {
+                id_telefono: nuevoConsumo.id_telefono,
+                consumo: nuevoConsumo.consumo,
+                fecha: nuevoConsumo.fecha
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+exports.updateConsumoService = updateConsumoService;
