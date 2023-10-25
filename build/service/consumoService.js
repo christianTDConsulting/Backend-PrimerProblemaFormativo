@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateConsumoService = exports.getConsumoPorYearService = exports.getConsumoByTelefonoService = exports.deleteConsumoService = exports.createConsumoService = exports.getConsumoByIdService = exports.getAllConsumoService = void 0;
+exports.getMediaMaxMinConsumoService = exports.updateConsumoService = exports.getConsumoPorYearService = exports.getConsumoByTelefonoService = exports.deleteConsumoService = exports.createConsumoService = exports.getConsumoByIdService = exports.getAllConsumoService = void 0;
 const database_1 = require("../database/database");
 function getAllConsumoService() {
     try {
@@ -120,3 +120,32 @@ function updateConsumoService(nuevoConsumo) {
     }
 }
 exports.updateConsumoService = updateConsumoService;
+/*
+SELECT t1.numero AS telefono, ifnull(t2.medio,0) AS media, ifnull(t2.maximo,0) AS maximo, ifnull(t2.minimo,0) AS minimo FROM telefonos t1
+LEFT JOIN (SELECT id_telefono , AVG(consumo) AS medio, MAX(consumo) AS maximo, MIN(consumo) AS minimo FROM consumos GROUP BY id_telefono) t2
+ON t1.id = t2.id_telefono
+*/
+function getMediaMaxMinConsumoService(id_telefono) {
+    try {
+        return database_1.db.$queryRaw `
+        SELECT
+            ifnull(t2.medio,0) AS media, ifnull(t2.maximo,0) AS maximo, ifnull(t2.minimo,0) AS minimo
+        FROM
+            telefonos t1
+        LEFT JOIN
+            (
+                SELECT id_telefono , AVG(consumo) AS medio, MAX(consumo) AS maximo, MIN(consumo) AS minimo FROM consumos GROUP BY id_telefono
+            ) t2
+        ON 
+            t1.id = t2.id_telefono
+        WHERE
+            t1.id = ${id_telefono}
+   
+        `;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+exports.getMediaMaxMinConsumoService = getMediaMaxMinConsumoService;

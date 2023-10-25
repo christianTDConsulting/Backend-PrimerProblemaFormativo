@@ -5,7 +5,8 @@ import {getAllConsumoService,
         deleteConsumoService, 
         getConsumoByTelefonoService,
         getConsumoPorYearService,
-        updateConsumoService
+        updateConsumoService,
+        getMediaMaxMinConsumoService
     } from '../service/consumoService';
 
 import { getTelefonosService } from '../service/clienteService';
@@ -143,6 +144,16 @@ async function updateConsumo(req:Request, res: Response){
          res.status(500).json({ error: 'Error al editar el consumo' });
       }
 }
+async function  getMediaMaxMinConsumo(req:Request, res: Response){
+    try{
+        const id_telefono = parseInt(req.params.telefono);
+        const mediaMaxMinConsumo = await getMediaMaxMinConsumoService(id_telefono);
+        res.status(200).json(mediaMaxMinConsumo);
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
 
 
 export{
@@ -153,7 +164,8 @@ export{
     getConsumoClientes,
     getConsumoTelefonos,
     getConsumoAnual,
-    updateConsumo
+    updateConsumo,
+    getMediaMaxMinConsumo
     
 
 }

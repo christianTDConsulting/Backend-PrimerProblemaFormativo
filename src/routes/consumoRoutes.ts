@@ -7,7 +7,8 @@ import {
     getConsumoClientes, 
     getConsumoTelefonos, 
     getConsumoAnual,
-    updateConsumo
+    updateConsumo,
+    getMediaMaxMinConsumo
 
 } from '../controller/consumoController'; // Importa el servicio de cliente
 
@@ -27,7 +28,9 @@ consumoRouter.get('/consumos/telefonos/:telefono', getConsumoTelefonos);
 
 consumoRouter.get('/consumosAnual/', getConsumoAnual);
 
-consumoRouter.put('/consumos',updateConsumo)
+consumoRouter.put('/consumos/:telefono',updateConsumo)
+
+consumoRouter.get('/mediaMaxMinConsumo/:telefono', getMediaMaxMinConsumo);
 
 
 

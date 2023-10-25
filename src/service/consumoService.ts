@@ -114,6 +114,40 @@ function updateConsumoService(nuevoConsumo:consumos){
     }
 }
 
+/*
+SELECT t1.numero AS telefono, ifnull(t2.medio,0) AS media, ifnull(t2.maximo,0) AS maximo, ifnull(t2.minimo,0) AS minimo FROM telefonos t1
+LEFT JOIN (SELECT id_telefono , AVG(consumo) AS medio, MAX(consumo) AS maximo, MIN(consumo) AS minimo FROM consumos GROUP BY id_telefono) t2
+ON t1.id = t2.id_telefono
+*/
+
+function getMediaMaxMinConsumoService(id_telefono:number){
+    try{
+        
+       
+        return db.$queryRaw`
+        SELECT
+            ifnull(t2.medio,0) AS media, ifnull(t2.maximo,0) AS maximo, ifnull(t2.minimo,0) AS minimo
+        FROM
+            telefonos t1
+        LEFT JOIN
+            (
+                SELECT id_telefono , AVG(consumo) AS medio, MAX(consumo) AS maximo, MIN(consumo) AS minimo FROM consumos GROUP BY id_telefono
+            ) t2
+        ON 
+            t1.id = t2.id_telefono
+        WHERE
+            t1.id = ${id_telefono}
+   
+        `;
+           
+            
+
+    }catch(error){
+        console.log(error);
+        throw error;
+    }
+}
+
 export{
     getAllConsumoService,
     getConsumoByIdService,
@@ -121,5 +155,6 @@ export{
     deleteConsumoService,
     getConsumoByTelefonoService,
     getConsumoPorYearService,
-    updateConsumoService
+    updateConsumoService,
+    getMediaMaxMinConsumoService
 }
