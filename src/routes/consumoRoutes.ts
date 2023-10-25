@@ -28,7 +28,7 @@ consumoRouter.get('/consumos/telefonos/:telefono', getConsumoTelefonos);
 
 consumoRouter.get('/consumosAnual/', getConsumoAnual);
 
-consumoRouter.put('/consumos/:telefono',updateConsumo)
+consumoRouter.put('/consumos/',updateConsumo)
 
 consumoRouter.get('/mediaMaxMinConsumo/:telefono', getMediaMaxMinConsumo);
 
