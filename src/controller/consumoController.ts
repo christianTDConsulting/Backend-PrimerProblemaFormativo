@@ -6,7 +6,8 @@ import {getAllConsumoService,
         getConsumoByTelefonoService,
         getConsumoPorYearService,
         updateConsumoService,
-        getMediaMaxMinConsumoService
+        getMediaMaxMinConsumoService,
+        getClienteDeConsumoService
     } from '../service/consumoService';
 
 import { getTelefonosService } from '../service/clienteService';
@@ -154,7 +155,17 @@ async function  getMediaMaxMinConsumo(req:Request, res: Response){
         res.status(500).json(error);
     }
 }
+async function getCliente(req:Request, res:Response){
+    try{
+        const id_consumo = parseInt(req.params.consumo);
+        const datos = await getClienteDeConsumoService(id_consumo);
+        res.status(200).json(datos);
 
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
 
 export{
     getAllConsumo,
@@ -165,7 +176,8 @@ export{
     getConsumoTelefonos,
     getConsumoAnual,
     updateConsumo,
-    getMediaMaxMinConsumo
+    getMediaMaxMinConsumo,
+    getCliente
     
 
 }

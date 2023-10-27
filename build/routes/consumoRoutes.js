@@ -15,4 +15,5 @@ consumoRouter.get('/consumos/telefonos/:telefono', consumoController_1.getConsum
 consumoRouter.get('/consumosAnual/', consumoController_1.getConsumoAnual);
 consumoRouter.put('/consumos/', consumoController_1.updateConsumo);
 consumoRouter.get('/mediaMaxMinConsumo/:telefono', consumoController_1.getMediaMaxMinConsumo);
+consumoRouter.get('/consumos/clientedata/:consumo', consumoController_1.getCliente);
 exports.default = consumoRouter;

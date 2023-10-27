@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMediaMaxMinConsumo = exports.updateConsumo = exports.getConsumoAnual = exports.getConsumoTelefonos = exports.getConsumoClientes = exports.deleteConsumo = exports.crearConsumo = exports.getConsumoById = exports.getAllConsumo = void 0;
+exports.getCliente = exports.getMediaMaxMinConsumo = exports.updateConsumo = exports.getConsumoAnual = exports.getConsumoTelefonos = exports.getConsumoClientes = exports.deleteConsumo = exports.crearConsumo = exports.getConsumoById = exports.getAllConsumo = void 0;
 const consumoService_1 = require("../service/consumoService");
 const clienteService_1 = require("../service/clienteService");
 function getAllConsumo(_req, res) {
@@ -183,3 +183,17 @@ function getMediaMaxMinConsumo(req, res) {
     });
 }
 exports.getMediaMaxMinConsumo = getMediaMaxMinConsumo;
+function getCliente(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const id_consumo = parseInt(req.params.consumo);
+            const datos = yield (0, consumoService_1.getClienteDeConsumoService)(id_consumo);
+            res.status(200).json(datos);
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    });
+}
+exports.getCliente = getCliente;

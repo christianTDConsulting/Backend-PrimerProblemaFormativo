@@ -114,6 +114,46 @@ function updateConsumoService(nuevoConsumo:consumos){
     }
 }
 
+
+/*
+SELECT
+    t1.id AS id_consumo,
+    t2.id AS id_telefono,
+ 	 t2.id_cliente AS id_cliente,
+ 	 t3.email AS email
+FROM
+   consumos t1
+LEFT JOIN telefonos t2 ON t1.id_telefono = t2.id
+LEFT JOIN clientes t3 ON t2.id_cliente = t3.id
+
+*/
+function getClienteDeConsumoService(id_consumo:number){
+    try{
+        
+       
+        return db.$queryRaw`
+        SELECT
+            t1.id AS id_consumo,
+            t2.id AS id_telefono,
+          t2.id_cliente AS id_cliente,
+          t3.email AS email
+        FROM
+            consumos t1
+        LEFT JOIN telefonos t2 ON t1.id_telefono = t2.id
+        LEFT JOIN clientes t3 ON t2.id_cliente = t3.id
+        WHERE 
+            t1.id = ${id_consumo}
+        `;
+           
+            
+
+    }catch(error){
+        console.log(error);
+        throw error;
+    }
+}
+
+
 /*
 SELECT t1.numero AS telefono, ifnull(t2.medio,0) AS media, ifnull(t2.maximo,0) AS maximo, ifnull(t2.minimo,0) AS minimo FROM telefonos t1
 LEFT JOIN (SELECT id_telefono , AVG(consumo) AS medio, MAX(consumo) AS maximo, MIN(consumo) AS minimo FROM consumos GROUP BY id_telefono) t2
@@ -156,5 +196,6 @@ export{
     getConsumoByTelefonoService,
     getConsumoPorYearService,
     updateConsumoService,
-    getMediaMaxMinConsumoService
+    getMediaMaxMinConsumoService,
+    getClienteDeConsumoService,
 }
