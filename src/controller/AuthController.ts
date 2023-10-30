@@ -15,7 +15,7 @@ import { transporter } from "../../config/mailer";
         attachments:  [
           {
             filename: 'Consumos.pdf',
-            content: file,
+            content: Buffer.from(file, 'base64'),
           }
         ]
       });
