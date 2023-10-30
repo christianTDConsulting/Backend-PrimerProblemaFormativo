@@ -16,7 +16,6 @@ import { transporter } from "../../config/mailer";
           {
             filename: 'Consumos.pdf',
             content: file,
-            
           }
         ]
       });
