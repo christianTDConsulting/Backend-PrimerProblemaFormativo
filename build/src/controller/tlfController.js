@@ -30,7 +30,6 @@ function getCliente(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            console.log(id);
             const telefono = yield (0, tlfService_1.getTelefonoByNumberIdService)(parseInt(id));
             if (!telefono) {
                 res.status(404).json({ error: 'Teléfono no encontrado' });
@@ -38,6 +37,7 @@ function getCliente(req, res) {
             else {
                 const cliente = yield (0, clienteService_1.getClienteByIdService)(telefono.id_cliente);
                 res.status(200).json(cliente); // Devuelve el cliente
+                console.log(cliente);
             }
         }
         catch (error) {
@@ -57,6 +57,7 @@ function crearTelefono(req, res) {
             }
             const newTlf = yield (0, tlfService_1.createTelefonoService)(numero, cliente);
             res.status(201).json(newTlf); // Devuelve el teléfono recién creado como respuesta JSON
+            console.log("teléfono creado");
         }
         catch (error) {
             console.error('Error al crear el teléfono:', error);
@@ -72,6 +73,7 @@ function deleteTelefono(req, res) {
             const deletedTLF = yield (0, tlfService_1.deleteTelefonoService)(id);
             if (deletedTLF) {
                 res.status(200).json({ message: 'Teléfono eliminado con éxito' });
+                console.log("teléfono eliminado");
             }
             else {
                 res.status(404).json({ error: 'Teléfono no encontrado' });
@@ -97,6 +99,7 @@ function editTelefonos(req, res) {
                 //Actualiza el telefono 
                 const updatedCliente = yield (0, tlfService_1.editTelefonosService)(tlfActualizado);
                 res.status(200).json(updatedCliente);
+                console.log("telefonoEditado");
             }
         }
         catch (error) {

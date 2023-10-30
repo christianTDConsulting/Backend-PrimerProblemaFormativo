@@ -15,7 +15,7 @@ async function getAllTelefonos(_req: Request, res: Response) {
 async function getCliente(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    console.log(id);
+    
 
     const telefono = await getTelefonoByNumberIdService(parseInt(id));
 
@@ -25,6 +25,7 @@ async function getCliente(req: Request, res: Response) {
       const cliente = await getClienteByIdService(telefono.id_cliente);
   
        res.status(200).json(cliente); // Devuelve el cliente
+       console.log(cliente);
     }
 
     
@@ -47,6 +48,7 @@ async function crearTelefono(req: Request, res: Response) {
     const newTlf = await createTelefonoService(numero, cliente);
 
      res.status(201).json(newTlf); // Devuelve el teléfono recién creado como respuesta JSON
+     console.log("teléfono creado")
   } catch (error) {
     console.error('Error al crear el teléfono:', error);
       res.status(500).json(error);
@@ -61,6 +63,7 @@ async function deleteTelefono(req: Request, res: Response) {
 
     if (deletedTLF) {
        res.status(200).json({ message: 'Teléfono eliminado con éxito' });
+       console.log("teléfono eliminado");
     } else {
        res.status(404).json({ error: 'Teléfono no encontrado' });
     }
@@ -80,6 +83,7 @@ async function editTelefonos(req: Request, res: Response) {
     //Actualiza el telefono 
     const updatedCliente = await editTelefonosService(tlfActualizado);
     res.status(200).json(updatedCliente);
+    console.log("telefonoEditado");
     }
   } catch (error) {
     console.error('Error al editar el telefono:', error);

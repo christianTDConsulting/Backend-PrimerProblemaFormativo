@@ -54,6 +54,7 @@ function crearCliente(req, res) {
             const nuevoCliente = req.body; // Suponiendo que el nombre se envía en el cuerpo de la solicitud
             if (!nuevoCliente || !nuevoCliente.nombre || !nuevoCliente.email) {
                 res.status(400).json({ error: 'Campos requeridos faltantes' }); //lanzar return?
+                console.log('Cliente creado');
             }
             else {
                 const newClient = yield (0, clienteService_1.createClienteService)(nuevoCliente);
@@ -76,6 +77,7 @@ function deleteClientes(req, res) {
             const deletedClient = yield (0, clienteService_1.deleteClienteService)(id);
             if (deletedClient) {
                 res.status(200).json({ message: 'Cliente eliminado con éxito' });
+                console.log("cliente eliminado");
             }
             else {
                 res.status(404).json({ error: 'Cliente no encontrado' });
@@ -93,10 +95,10 @@ function getTlf(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const clienteId = parseInt(req.params.id);
-            console.log(clienteId);
             // Lista de teléfonos
             const tlf = yield (0, clienteService_1.getTelefonosService)(clienteId);
             res.status(200).json(tlf); // Lista de teléfonos
+            console.log("telefono obtenido: " + tlf);
         }
         catch (error) {
             console.error(error, 'Error al obtener teléfonos');
@@ -118,6 +120,7 @@ function editarCliente(req, res) {
                 // Actualiza el cliente
                 const updatedCliente = yield (0, clienteService_1.editarClienteService)(clienteActualizado);
                 res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
+                console.log("cliente editado");
             }
         }
         catch (error) {

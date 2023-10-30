@@ -10,9 +10,10 @@ import {
 const tlfRouter: Router = express.Router();
 
 tlfRouter.get('/telefonos', getAllTelefonos);
-tlfRouter.get('/telefonos/:numero/cliente', getCliente);
+tlfRouter.get('/telefonos/:id/cliente', getCliente);
 tlfRouter.post('/telefonos', crearTelefono);
 tlfRouter.delete('/telefonos', deleteTelefono);
 tlfRouter.put('/telefonos', editTelefonos);
+
 
 export default tlfRouter;

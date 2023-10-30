@@ -41,6 +41,7 @@ async function crearCliente(req: Request, res: Response) {
 
     if (!nuevoCliente || !nuevoCliente.nombre || !nuevoCliente.email) {
        res.status(400).json({ error: 'Campos requeridos faltantes' }); //lanzar return?
+       console.log('Cliente creado')
     }else{
       const newClient = await createClienteService(nuevoCliente);
       res.status(200).json(newClient); // Devuelve el cliente recién creado como respuesta JSON
@@ -63,6 +64,7 @@ async function deleteClientes(req: Request, res: Response) {
 
     if (deletedClient) {
       res.status(200).json({ message: 'Cliente eliminado con éxito' });
+      console.log("cliente eliminado");
     } else {
       res.status(404).json({ error: 'Cliente no encontrado' });
     }
@@ -76,12 +78,12 @@ async function deleteClientes(req: Request, res: Response) {
 async function getTlf(req: Request, res: Response) {
   try {
     const clienteId = parseInt(req.params.id);
-    console.log(clienteId);
-
+    
     // Lista de teléfonos
     const tlf = await getTelefonosService(clienteId);
 
     res.status(200).json(tlf); // Lista de teléfonos
+    console.log("telefono obtenido: " + tlf);
   } catch (error) {
     console.error(error, 'Error al obtener teléfonos');
     res.status(500).json(error);
@@ -103,6 +105,7 @@ async function editarCliente(req: Request, res: Response) {
     const updatedCliente = await editarClienteService(clienteActualizado);
 
     res.status(200).json(updatedCliente); // Devuelve el cliente actualizado como respuesta JSON
+    console.log("cliente editado")
     }
   } catch (error) {
     console.error('Error al editar el cliente:', error);
