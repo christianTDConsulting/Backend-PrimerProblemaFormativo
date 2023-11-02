@@ -4,6 +4,19 @@ import {db} from '../database/database';
 function getAllClientesService(){
     return  db.clientes.findMany();
 }
+
+function getAllVisibleClienteService(visible:boolean){
+  try{
+    return db.clientes.findMany({
+      where: {
+        visible: visible,
+      },
+    })
+  }catch(error){
+    console.error('Error al obtener Clientes:', error);
+    throw error;
+  }
+}
 function getClienteByIdService(clienteId:number){
     
     return db.clientes.findUnique({
@@ -66,7 +79,8 @@ function editarClienteService(clienteActualizado:clientes) {
         nombre: clienteActualizado.nombre,
         email: clienteActualizado.email,
         bio: clienteActualizado.bio,
-        nacimiento: clienteActualizado.nacimiento
+        nacimiento: clienteActualizado.nacimiento,
+        visible: clienteActualizado.visible
       },
     });
   }catch(error){
@@ -83,5 +97,7 @@ export {
     createClienteService,
     deleteClienteService,
     getTelefonosService,
-    editarClienteService
+    editarClienteService,
+    getAllVisibleClienteService,
+    
 };

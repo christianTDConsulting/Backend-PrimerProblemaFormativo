@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllClientesService, getClienteByIdService, createClienteService, deleteClienteService, getTelefonosService, editarClienteService } from '../service/clienteService';
+import { getAllClientesService, getClienteByIdService, createClienteService, deleteClienteService, getTelefonosService, editarClienteService, getAllVisibleClienteService } from '../service/clienteService';
 
 // Obtener todos los clientes
 async function getAllClientes(_req: Request, res: Response) {
@@ -113,6 +113,40 @@ async function editarCliente(req: Request, res: Response) {
   }
 }
 
+async function toggleVisibility(req: Request, res: Response){
+  try{
+    const id = parseInt(req.params.id);
+    const clienteExistente = await getClienteByIdService(id);
+    if (!clienteExistente){
+      res.status(404).json({ error: 'Cliente  no encontrado' });
+    }else{
+      clienteExistente.visible = !clienteExistente.visible;
+      const updatedCliente = await editarClienteService(clienteExistente);
+      res.status(200).json(updatedCliente);
+      console.log("telefono Editado");
+    }
+
+  } catch(error) {
+    console.error('Error al cambiar visibilidad  del cliente:', error);
+    res.status(500).json({ error: 'Error al cambiar visibilidad  del cliente' });
+  }
+
+}
+async function getAllClientesVisible(req: Request, res: Response) {
+  try {
+    const visibleParam  = req.params.visible;
+    const visible = visibleParam === 'true';
+
+    const clientes = await getAllVisibleClienteService(visible);
+    console.log(clientes);
+    res.status(200).json(clientes);
+  } catch (error) {
+    console.error('Error al obtener los clientes:', error);
+    res.status(500).json({ error: 'Error al obtener los clientes' });
+  }
+}
+
+
 export {
   getAllClientes,
   getClienteById,
@@ -120,5 +154,8 @@ export {
   deleteClientes,
   getTlf,
   editarCliente,
+  toggleVisibility,
+  getAllClientesVisible,
+ 
   
 };

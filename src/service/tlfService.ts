@@ -10,6 +10,32 @@ function getAllTelefonosService() {
       throw error;
     }
 }
+function getAllVisibleTelefonosService(visible:boolean){
+    try{
+        return db.telefonos.findMany({
+            where: {
+                visible: visible,
+            },
+        });
+    } catch(error){
+        console.error('Error al obtener teléfonos:', error);
+        throw error;
+    }
+}
+function getVisibleTelefonosFromClienteService(id: number, visible: boolean) {
+    try{
+        return db.telefonos.findMany({
+            where: {
+                id_cliente: id,
+                visible: visible,
+            },
+        });
+    } catch(error){
+        console.error('Error al obtener teléfonos:', error);
+        throw error;
+    }
+}
+
 function getTelefonoByNumberIdService(id: number) {
     try{
         return db.telefonos.findUnique({
@@ -58,6 +84,7 @@ function editTelefonosService(telefono:telefonos) {
             data: {
                 numero: telefono.numero,
                 id_cliente: telefono.id_cliente,
+                visible: telefono.visible
             },
         });
     }
@@ -74,5 +101,7 @@ export {
     getTelefonoByNumberIdService,
     createTelefonoService,
     deleteTelefonoService,
-    editTelefonosService
+    editTelefonosService,
+    getAllVisibleTelefonosService,
+    getVisibleTelefonosFromClienteService
 };

@@ -6,6 +6,9 @@ import {
   deleteClientes,
   getTlf,
   editarCliente,
+  toggleVisibility,
+  getAllClientesVisible,
+  
 } from '../controller/clienteController'; // Importa el servicio de cliente
 
 
@@ -24,6 +27,11 @@ clienteRouter.delete('/clientes', deleteClientes);
 clienteRouter.get('/clientes/:id/telefonos', getTlf);
 
 clienteRouter.put('/clientes', editarCliente);
+
+clienteRouter.put('/clientes/:id', toggleVisibility);
+
+clienteRouter.get('/visible/clientes/:visible', getAllClientesVisible);
+
 
 
 

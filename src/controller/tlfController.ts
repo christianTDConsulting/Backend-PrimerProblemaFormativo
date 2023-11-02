@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllTelefonosService, getTelefonoByNumberIdService, createTelefonoService, deleteTelefonoService, editTelefonosService} from '../service/tlfService';
+import { getAllTelefonosService, getTelefonoByNumberIdService, createTelefonoService, deleteTelefonoService, editTelefonosService, getAllVisibleTelefonosService, getVisibleTelefonosFromClienteService} from '../service/tlfService';
 import { getClienteByIdService } from '../service/clienteService';
 async function getAllTelefonos(_req: Request, res: Response) {
   try {
@@ -81,8 +81,8 @@ async function editTelefonos(req: Request, res: Response) {
       res.status(404).json({ error: 'Telefono no encontrado' });
     }else{
     //Actualiza el telefono 
-    const updatedCliente = await editTelefonosService(tlfActualizado);
-    res.status(200).json(updatedCliente);
+    const updatedTlf = await editTelefonosService(tlfActualizado);
+    res.status(200).json(updatedTlf);
     console.log("telefonoEditado");
     }
   } catch (error) {
@@ -91,4 +91,52 @@ async function editTelefonos(req: Request, res: Response) {
   }
   
 }
-export { getAllTelefonos, getCliente, crearTelefono, deleteTelefono, editTelefonos };
+
+async function toggleVisibility(req: Request, res: Response){
+  try{
+    const id = parseInt(req.params.id);
+    const telefonoExistente = await getTelefonoByNumberIdService(id);
+    if (!telefonoExistente){
+      res.status(404).json({ error: 'Telefono no encontrado' });
+    }else{
+      telefonoExistente.visible = !telefonoExistente.visible;
+      const updatedTlf = await editTelefonosService(telefonoExistente);
+      res.status(200).json(updatedTlf);
+      console.log("telefonoEditado");
+    }
+
+  } catch(error) {
+    console.error('Error al cambiar visibilidad  del telefono:', error);
+    res.status(500).json({ error: 'Error al cambiar visibilidad  del telefono' });
+  }
+
+}
+async function getAllVisibleTelefonos(req: Request, res:Response){
+  try {
+    const visibleParam  = req.params.visible;
+    const visible = visibleParam === 'true';
+
+    const telefonos = await getAllVisibleTelefonosService(visible);
+    console.log(telefonos);
+    res.status(200).json(telefonos); // Retorna todos los teléfonos encontrados
+  } catch (error) {
+    console.error('Error al obtener teléfonos');
+    res.status(500).json(error);
+  }
+}
+async function getVisibleTelefonosFromCliente(req: Request, res:Response){
+  try {
+    const clienteId = parseInt(req.params.id);
+    const visibleParam  = req.params.visible;
+    const visible = visibleParam === 'true';
+
+    const telefonos = await getVisibleTelefonosFromClienteService(clienteId, visible);
+    console.log(telefonos);
+    res.status(200).json(telefonos); // Retorna todos los teléfonos encontrados
+  } catch (error) {
+    console.error('Error al obtener teléfonos');
+    res.status(500).json(error);
+  }
+}
+
+export { getAllTelefonos, getCliente, crearTelefono, deleteTelefono, editTelefonos, toggleVisibility, getAllVisibleTelefonos,getVisibleTelefonosFromCliente};
