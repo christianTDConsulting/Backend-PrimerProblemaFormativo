@@ -58,7 +58,7 @@ async function crearCliente(req: Request, res: Response) {
 async function deleteClientes(req: Request, res: Response) {
   try {
     const { id } = req.body; // Suponiendo que el ID se envía en el cuerpo de la solicitud
-
+    console.log(id);
     // Intenta eliminar el cliente
     const deletedClient = await deleteClienteService(id);
 

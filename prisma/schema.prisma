@@ -31,7 +31,7 @@ model consumos {
   id_telefono Int
   consumo     Float     @default(0)
   fecha       DateTime  @db.Date
-  telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_gastos_telefonos")
+  telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: Cascade, map: "FK_gastos_telefonos")
 
   @@index([id_telefono], map: "FK_gastos_telefonos")
 }
