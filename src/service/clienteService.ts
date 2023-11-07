@@ -33,7 +33,9 @@ function createClienteService(nuevoCliente:clientes){
         nombre: nuevoCliente.nombre,
         email: nuevoCliente.email,
         bio: nuevoCliente.bio,
-        nacimiento: nuevoCliente.nacimiento
+        nacimiento: nuevoCliente.nacimiento,
+        id_usuario: nuevoCliente.id_usuario,
+        visible: true
       }
     });
 
@@ -80,7 +82,8 @@ function editarClienteService(clienteActualizado:clientes) {
         email: clienteActualizado.email,
         bio: clienteActualizado.bio,
         nacimiento: clienteActualizado.nacimiento,
-        visible: clienteActualizado.visible
+        visible: true,
+        id_usuario: clienteActualizado.id_usuario
       },
     });
   }catch(error){

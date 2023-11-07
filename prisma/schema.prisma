@@ -10,11 +10,15 @@ datasource db {
 model clientes {
   id         Int         @id @default(autoincrement())
   nombre     String?     @db.VarChar(50)
-  email      String      @unique(map: "email") @db.VarChar(50)
   bio        String?     @db.VarChar(200)
+  id_usuario Int?
   nacimiento DateTime    @db.Date
   visible    Boolean     @default(dbgenerated("(b'1')")) @db.Bit(1)
+  email      String?     @db.VarChar(50)
+  usuario    usuarios?   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuario")
   telefonos  telefonos[]
+
+  @@index([id_usuario], map: "FK_clientes_usuarios")
 }
 
 model telefonos {
@@ -36,4 +40,22 @@ model consumos {
   telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: NoAction, map: "FK_gastos_telefonos")
 
   @@index([id_telefono], map: "FK_gastos_telefonos")
+}
+
+model logs {
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime @db.Date
+  id_usuario Int
+  exito      Boolean  @db.Bit(1)
+  usuarios   usuarios @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_logs_usuarios")
+
+  @@index([id_usuario], map: "FK_Logs_clientes")
+}
+
+model usuarios {
+  id       Int        @id @default(autoincrement())
+  password String     @db.VarChar(60)
+  email    String     @unique(map: "email") @db.VarChar(50)
+  clientes clientes[]
+  logs     logs[]
 }

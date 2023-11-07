@@ -156,6 +156,6 @@ export {
   editarCliente,
   toggleVisibility,
   getAllClientesVisible,
- 
+
   
 };
