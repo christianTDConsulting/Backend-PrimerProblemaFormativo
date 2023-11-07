@@ -104,6 +104,26 @@ function getUsuarioByIdService(id: number){
         throw error;
     }
 }
+
+ function findLogByEmailService(email:string) {
+    return db.logs.findUnique({
+        where: {
+            email: email
+        }
+    })
+  }
+
+  function updateLogService(logId: number, intentos: number, ultimaFecha: Date) {
+    return db.logs.update({
+      where: { id: logId },
+      data: {
+        intentos: intentos,
+        fecha: ultimaFecha,
+      },
+    });
+  }
+
+ 
 export {
     crearUsuarioService,
     getUserByEmailService,
@@ -111,5 +131,9 @@ export {
     verUsuariosService,
     verLogsService,
     postLogService,
-    getUsuarioByIdService
+    getUsuarioByIdService,
+    findLogByEmailService,
+    updateLogService,
+    
+    
 }

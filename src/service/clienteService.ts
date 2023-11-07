@@ -92,8 +92,19 @@ function editarClienteService(clienteActualizado:clientes) {
 }
 }
 
+/*function findLogByIpService(ip:string){
+  try{
 
+    return db.logs.findMany({
+         // terminar
+      });
+    }catch(error){
+      console.error('Error al obtener logs:', error);
+      throw error;
+    }
+}
 
+*/
 export {
     getAllClientesService,
     getClienteByIdService,
@@ -102,5 +113,6 @@ export {
     getTelefonosService,
     editarClienteService,
     getAllVisibleClienteService,
+   // findLogByIpService
     
 };

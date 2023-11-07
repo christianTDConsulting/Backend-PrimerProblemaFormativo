@@ -43,13 +43,12 @@ model consumos {
 }
 
 model logs {
-  id         Int      @id @default(autoincrement())
-  fecha      DateTime @db.Date
-  id_usuario Int
-  exito      Boolean  @db.Bit(1)
-  usuarios   usuarios @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_logs_usuarios")
-
-  @@index([id_usuario], map: "FK_Logs_clientes")
+  id       Int      @id @default(autoincrement())
+  fecha    DateTime @db.Date
+  email    String   @unique(map: "email") @default("") @db.VarChar(60)
+  intentos Int?
+  exito    Boolean? @db.Bit(1)
+  ip       String?  @db.VarChar(50)
 }
 
 model usuarios {
@@ -57,5 +56,4 @@ model usuarios {
   password String     @db.VarChar(60)
   email    String     @unique(map: "email") @db.VarChar(50)
   clientes clientes[]
-  logs     logs[]
 }

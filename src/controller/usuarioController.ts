@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
-import { crearUsuarioService, getUserByEmailService, editarUsuarioService, verUsuariosService, verLogsService, postLogService, getUsuarioByIdService} from '../service/usuarioService';
+import {
+     crearUsuarioService,
+     getUserByEmailService,
+     editarUsuarioService,
+     verUsuariosService,
+     verLogsService,
+     //postLogService,
+     getUsuarioByIdService,
+     //findLogByIpService,
+     //updateLogService,
+     } from '../service/usuarioService';
 import * as bcrypt from 'bcryptjs';
 async function crearUsuario(req: Request, res: Response) {
     try{
@@ -48,10 +58,33 @@ async function verLogs(_req: Request, res: Response) {
     }
 }
 
-async function postLogs(req: Request, res: Response) {
+/*async function postLogs(req: Request, res: Response) {
     try{
         const log = req.body;
-        await postLogService(log);
+        const existingLog = await findLogByIpService(log.ip); //findLogByIpService devuelve los Logs de la ip
+        if (existingLog && !existingLog.exito) {
+            const currentDate = new Date();
+            const logDate = existingLog.fecha;
+
+            const  timeDifference = currentDate.getTime() - logDate.getTime();
+            const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+            if (dayDifference >= 1) {
+                // Reiniciar el número de intentos si ha pasado más de un día
+                await updateLogService(existingLog.id, 1, currentDate);
+              } else {
+                await updateLogService(existingLog.id, (existingLog.intentos || 0) + 1, logDate);
+              }
+
+        // Si ya ha habido 5 intentos fallidos, bloquea al usuario
+        if ((existingLog.intentos || 0) >= 4) {
+            //bloquear IP
+           
+            }
+        }else{
+            await postLogService(log);
+        }
+        
         res.status(201).json({message: 'Log creado'});
         console.log("log creado");
     }catch(error){
@@ -59,6 +92,7 @@ async function postLogs(req: Request, res: Response) {
         res.status(500).json(error);
     }
 }
+*/
 
 async function verificarUsuario(req: Request, res: Response) {
   try{
@@ -99,7 +133,23 @@ async function getUsuarioById(req: Request, res: Response) {
        res.status(500).json(error);
     }
    }
+   async function getUsuarioByEmail(req: Request, res: Response) {
+    try{
+       const email = req.params.email;
+       const cliente = await getUserByEmailService(email);
+       if (!cliente) {
+         res.status(404).json({ error: 'Cliente no encontrado' }); 
+         
+       } else{
+         res.status(200).json(cliente); // Envía el cliente como respuesta JSON
+       }
+    }catch(error){
+       console.error('Error al obtener cliente ', error);
+       res.status(500).json(error);
+    }
+   }
    
+ 
 
 export {
     crearUsuario,
@@ -107,6 +157,8 @@ export {
     verUsuarios,
     verLogs,
     verificarUsuario,
-    postLogs,
-    getUsuarioById
+   // postLogs,
+    getUsuarioById,
+    getUsuarioByEmail,
+    
 }
