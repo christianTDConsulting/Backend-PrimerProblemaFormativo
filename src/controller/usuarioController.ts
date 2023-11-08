@@ -5,12 +5,17 @@ import {
      editarUsuarioService,
      verUsuariosService,
      verLogsService,
+     getClienteFromUserService,
      //postLogService,
      getUsuarioByIdService,
+     crearAdminService,
      //findLogByIpService,
      //updateLogService,
      } from '../service/usuarioService';
 import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
+
 async function crearUsuario(req: Request, res: Response) {
     try{
         const credentials = req.body;
@@ -19,6 +24,20 @@ async function crearUsuario(req: Request, res: Response) {
         await crearUsuarioService(hashedPassword, credentials.email);
         res.status(201).json({message: 'Usuario creado'});
         console.log("usuario creado");
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+async function crearAdmin(req: Request, res: Response) {
+
+     try{
+        const credentials = req.body;
+        const saltRounds = 10;
+        const hashedPassword = bcrypt.hashSync(credentials.plainPassword, saltRounds);
+        await crearAdminService(hashedPassword, credentials.email);
+        res.status(201).json({message: 'Admin creado'});
+        console.log("Admin creado");
     }catch(error){
         console.log(error);
         res.status(500).json(error);
@@ -104,8 +123,14 @@ async function verificarUsuario(req: Request, res: Response) {
    }else{
     const passwordMatches = bcrypt.compareSync(plainPassword, user.password);
     
-    if (passwordMatches) {
-        res.status(200).json({ message: 'Credenciales correctas' });
+    if (passwordMatches ) {
+
+        //mandar por token
+      
+        // Crea un token JWT con la clave secreta
+        const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET!, { expiresIn: '1h' });
+        res.status(200).json({ token });
+        
     } else {
         res.status(401).json({ message: 'Credenciales incorrectas' });
     }
@@ -149,7 +174,33 @@ async function getUsuarioById(req: Request, res: Response) {
     }
    }
    
- 
+
+ async function decodeToken(req: Request, res: Response) {
+    try{
+        const token = req.params.token;
+
+        const decodedToken: JwtPayload  = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+        const userEmail = decodedToken.email;
+    
+        const user = await getUserByEmailService(userEmail);
+        if (user){
+            const cliente = await getClienteFromUserService(user.id);
+            if (cliente){
+                res.status(200).json({ user, cliente });
+            }else{
+                res.status(404).json({ error: 'cliente no encontrado' });
+            }
+        }else{
+            res.status(404).json({ error: 'usuario no encontrado' });
+        }
+        
+        
+    }catch(error){
+        console.error('Error al decodificar el token', error);
+        res.status(500).json(error);
+    }
+}
 
 export {
     crearUsuario,
@@ -160,5 +211,7 @@ export {
    // postLogs,
     getUsuarioById,
     getUsuarioByEmail,
+    crearAdmin,
+    decodeToken
     
 }

@@ -10,7 +10,27 @@ function crearUsuarioService(cryptedPassword: string, email: string) {
         return db.usuarios.create({
             data: {
                 password: cryptedPassword,
-                email: email
+                email: email,
+                id_perfil: 1,
+            }
+        })
+    }catch(error){
+        console.error('Error al crear el usuario:', error);
+        throw error;
+    }
+    
+   
+    
+}
+
+function crearAdminService(cryptedPassword: string, email: string) {
+  
+    try{
+        return db.usuarios.create({
+            data: {
+                password: cryptedPassword,
+                email: email,
+                id_perfil: 2,
             }
         })
     }catch(error){
@@ -122,6 +142,14 @@ function getUsuarioByIdService(id: number){
       },
     });
   }
+  function getClienteFromUserService( id_usuario: number) {
+    //Me devuelve todos los clientes que pueda tener asociado un usuario
+    return  db.clientes.findUnique({
+      where: {
+        id_usuario: id_usuario,
+      },
+    });
+  }
 
  
 export {
@@ -134,6 +162,6 @@ export {
     getUsuarioByIdService,
     findLogByEmailService,
     updateLogService,
-    
-    
+    crearAdminService,
+    getClienteFromUserService
 }

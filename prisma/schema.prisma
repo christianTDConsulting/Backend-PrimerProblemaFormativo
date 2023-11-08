@@ -11,14 +11,11 @@ model clientes {
   id         Int         @id @default(autoincrement())
   nombre     String?     @db.VarChar(50)
   bio        String?     @db.VarChar(200)
-  id_usuario Int?
+  id_usuario Int?        @unique(map: "id_usuario")
   nacimiento DateTime    @db.Date
   visible    Boolean     @default(dbgenerated("(b'1')")) @db.Bit(1)
-  email      String?     @db.VarChar(50)
   usuario    usuarios?   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuario")
   telefonos  telefonos[]
-
-  @@index([id_usuario], map: "FK_clientes_usuarios")
 }
 
 model telefonos {
@@ -52,8 +49,14 @@ model logs {
 }
 
 model usuarios {
-  id       Int        @id @default(autoincrement())
-  password String     @db.VarChar(60)
-  email    String     @unique(map: "email") @db.VarChar(50)
-  clientes clientes[]
+  id        Int       @id @default(autoincrement())
+  password  String    @db.VarChar(60)
+  email     String    @unique(map: "email") @db.VarChar(50)
+  id_perfil Int?
+  clientes  clientes?
+}
+
+model perfiles {
+  id  Int     @id
+  rol String? @db.VarChar(50)
 }

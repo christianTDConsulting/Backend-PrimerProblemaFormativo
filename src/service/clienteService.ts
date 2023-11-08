@@ -31,7 +31,6 @@ function createClienteService(nuevoCliente:clientes){
     const cliente = db.clientes.create({
       data: {
         nombre: nuevoCliente.nombre,
-        email: nuevoCliente.email,
         bio: nuevoCliente.bio,
         nacimiento: nuevoCliente.nacimiento,
         id_usuario: nuevoCliente.id_usuario,
@@ -79,7 +78,6 @@ function editarClienteService(clienteActualizado:clientes) {
       },
       data: {
         nombre: clienteActualizado.nombre,
-        email: clienteActualizado.email,
         bio: clienteActualizado.bio,
         nacimiento: clienteActualizado.nacimiento,
         visible: true,
@@ -113,6 +111,6 @@ export {
     getTelefonosService,
     editarClienteService,
     getAllVisibleClienteService,
-   // findLogByIpService
+
     
 };

@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { crearUsuario, editarUsuario, verUsuarios, verLogs, verificarUsuario, /*postLogs,*/ getUsuarioById, getUsuarioByEmail } from '../controller/usuarioController';
+import { crearUsuario, editarUsuario, verUsuarios, verLogs, verificarUsuario, /*postLogs,*/ getUsuarioById, getUsuarioByEmail, decodeToken} from '../controller/usuarioController';
 const usuarioRouter: Router = express.Router();
 
 usuarioRouter.post('/usuarios', crearUsuario);
@@ -10,5 +10,6 @@ usuarioRouter.get('/usuarios', verUsuarios);
 usuarioRouter.get('/logs', verLogs);
 //usuarioRouter.post('/logs',postLogs);
 usuarioRouter.post('/verificar', verificarUsuario);
+usuarioRouter.get('/token/:token', decodeToken );
 
 export default usuarioRouter;
