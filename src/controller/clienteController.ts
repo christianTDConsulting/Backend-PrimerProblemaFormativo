@@ -1,12 +1,27 @@
 import { Request, Response } from 'express';
 import { getAllClientesService, getClienteByIdService, createClienteService, deleteClienteService, getTelefonosService, editarClienteService, getAllVisibleClienteService } from '../service/clienteService';
-
+import {getUserByIdService } from '../service/usuarioService';
 // Obtener todos los clientes
 async function getAllClientes(_req: Request, res: Response) {
   try {
     const clientes = await getAllClientesService();
     console.log(clientes);
-    res.status(200).json(clientes); // Retorna todos los clientes encontrados
+
+    const formattedClientes = await Promise.all(
+      clientes.map(async (cliente) => {
+        const usuario = await getUserByIdService(cliente.id_usuario);
+        return {
+          id: cliente.id,
+          usuario: usuario,
+          nombre: cliente.nombre,
+          bio: cliente.bio,
+          nacimiento: cliente.nacimiento,
+          visible: cliente.visible,
+        };
+      })
+    );
+
+    res.status(200).json(formattedClientes); // Retorna todos los clientes encontrados
   } catch (error) {
     console.error('Error al obtener clientes');
     res.status(500).json(error);
@@ -24,7 +39,16 @@ async function getClienteById(req: Request, res: Response) {
     } else{
 
       console.log('Cliente obtenido con éxito');
-      res.status(200).json(cliente); // Envía el cliente como respuesta JSON
+      const usuario = await getUserByIdService(cliente.id_usuario);
+      const formattedCliente = {
+        id: cliente.id,
+        usuario: usuario,
+        nombre: cliente.nombre,
+        bio: cliente.bio,
+        nacimiento: cliente.nacimiento,
+        visible: cliente.visible,
+      };
+      res.status(200).json(formattedCliente); // Envía el cliente como respuesta JSON
     }
 
   } catch (error) {
@@ -138,8 +162,23 @@ async function getAllClientesVisible(req: Request, res: Response) {
     const visible = visibleParam === 'true';
 
     const clientes = await getAllVisibleClienteService(visible);
-    console.log(clientes);
-    res.status(200).json(clientes);
+
+    const formattedClientes = await Promise.all(
+      clientes.map(async (cliente) => {
+        const usuario = await getUserByIdService(cliente.id_usuario);
+        return {
+          id: cliente.id,
+          usuario: usuario,
+          nombre: cliente.nombre,
+          bio: cliente.bio,
+          nacimiento: cliente.nacimiento,
+          visible: cliente.visible,
+        };
+      })
+    );
+
+    console.log(formattedClientes);
+    res.status(200).json(formattedClientes);
   } catch (error) {
     console.error('Error al obtener los clientes:', error);
     res.status(500).json({ error: 'Error al obtener los clientes' });

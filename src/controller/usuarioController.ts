@@ -9,11 +9,16 @@ import {
      //postLogService,
      getUsuarioByIdService,
      crearAdminService,
+     
+     
      //findLogByIpService,
      //updateLogService,
      } from '../service/usuarioService';
+
+     import { createClienteService, linkUserToClientService } from '../service/clienteService';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+
 import { JwtPayload } from 'jsonwebtoken';
 
 async function crearUsuario(req: Request, res: Response) {
@@ -186,10 +191,24 @@ async function getUsuarioById(req: Request, res: Response) {
         const user = await getUserByEmailService(userEmail);
         if (user){
             const cliente = await getClienteFromUserService(user.id);
+            console.log("cliente");
             if (cliente){
-                res.status(200).json({ user, cliente });
-            }else{
-                res.status(404).json({ error: 'cliente no encontrado' });
+                res.status(200).json({ 
+                    id: cliente.id,
+                    usuario: user,
+                    nombre: cliente.nombre,
+                    bio: cliente.bio,
+                    nacimiento: cliente.nacimiento,
+                    visible: cliente.visible,
+                 });
+            }else{//cliente no encontrado 
+                
+                if (user.id_perfil === 2){//si es admin
+                    res.status(200).json({usuario: user})
+                }else{console.log
+                    res.status(404).json({ error: 'cliente no encontrado' });
+                }
+                
             }
         }else{
             res.status(404).json({ error: 'usuario no encontrado' });
@@ -202,6 +221,40 @@ async function getUsuarioById(req: Request, res: Response) {
     }
 }
 
+async function crearUsuarioYCliente(req: Request, res: Response) {
+    try {
+      const { usuarioData, clienteData } = req.body;
+  
+      // Crea el usuario en la base de datos
+        const saltRounds = 10;
+        const hashedPassword = bcrypt.hashSync(usuarioData.plainPassword, saltRounds);
+        const nuevoUsuario =await crearUsuarioService(hashedPassword, usuarioData.email);
+
+      // Crea el cliente en la base de datos y lo relaciona con el usuario
+      const nuevoCliente = await createClienteService(clienteData);
+
+      //enlaza el usuario con el cliente
+      await linkUserToClientService(nuevoUsuario.id, nuevoCliente.id);
+
+      res.status(201).json({ usuario: nuevoUsuario, cliente: nuevoCliente });
+    } catch (error) {
+      console.error('Error al crear usuario y cliente', error);
+      res.status(500).json({ error: 'Error al crear usuario y cliente' });
+    }
+  }
+/*function findLogByIpService(ip:string){
+  try{
+
+    return db.logs.findMany({
+         // terminar
+      });
+    }catch(error){
+      console.error('Error al obtener logs:', error);
+      throw error;
+    }
+}
+
+*/
 export {
     crearUsuario,
     editarUsuario,
@@ -212,6 +265,6 @@ export {
     getUsuarioById,
     getUsuarioByEmail,
     crearAdmin,
-    decodeToken
-    
+    decodeToken,
+    crearUsuarioYCliente
 }

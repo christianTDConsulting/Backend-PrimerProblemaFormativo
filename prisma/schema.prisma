@@ -11,10 +11,10 @@ model clientes {
   id         Int         @id @default(autoincrement())
   nombre     String?     @db.VarChar(50)
   bio        String?     @db.VarChar(200)
-  id_usuario Int?        @unique(map: "id_usuario")
+  id_usuario Int         @unique(map: "id_usuario")
   nacimiento DateTime    @db.Date
   visible    Boolean     @default(dbgenerated("(b'1')")) @db.Bit(1)
-  usuario    usuarios?   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuario")
+  usuario    usuarios    @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuario")
   telefonos  telefonos[]
 }
 

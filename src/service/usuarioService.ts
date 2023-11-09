@@ -151,6 +151,19 @@ function getUsuarioByIdService(id: number){
     });
   }
 
+  function getUserByIdService(id: number){
+    try{
+        return db.usuarios.findFirst({
+            where: {
+                id: id
+            }
+        })
+    }catch(error){
+        console.error('Error al obtener el usuario:', error);
+        throw error;
+    }
+}
+
  
 export {
     crearUsuarioService,
@@ -163,5 +176,6 @@ export {
     findLogByEmailService,
     updateLogService,
     crearAdminService,
-    getClienteFromUserService
+    getClienteFromUserService,
+    getUserByIdService
 }

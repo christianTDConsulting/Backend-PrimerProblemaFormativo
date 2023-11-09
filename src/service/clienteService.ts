@@ -29,13 +29,7 @@ function createClienteService(nuevoCliente:clientes){
           
   try {
     const cliente = db.clientes.create({
-      data: {
-        nombre: nuevoCliente.nombre,
-        bio: nuevoCliente.bio,
-        nacimiento: nuevoCliente.nacimiento,
-        id_usuario: nuevoCliente.id_usuario,
-        visible: true
-      }
+      data: nuevoCliente
     });
 
     return cliente;
@@ -90,19 +84,17 @@ function editarClienteService(clienteActualizado:clientes) {
 }
 }
 
-/*function findLogByIpService(ip:string){
-  try{
 
-    return db.logs.findMany({
-         // terminar
-      });
-    }catch(error){
-      console.error('Error al obtener logs:', error);
-      throw error;
-    }
+function linkUserToClientService(id_usuario: number, id_cliente: number) {
+  return db.clientes.update({
+    where: {
+      id: id_cliente,
+    },
+    data: {
+      id_usuario: id_usuario,
+    },
+  });
 }
-
-*/
 export {
     getAllClientesService,
     getClienteByIdService,
@@ -111,6 +103,7 @@ export {
     getTelefonosService,
     editarClienteService,
     getAllVisibleClienteService,
-
+    linkUserToClientService,
+    
     
 };
