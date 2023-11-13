@@ -28,7 +28,7 @@ clienteRouter.get('/clientes/:id/telefonos', getTlf);
 
 clienteRouter.put('/clientes', editarCliente);
 
-clienteRouter.put('/clientes/:id', toggleVisibility);
+clienteRouter.put('/clientes/:id', toggleVisibility); //cambiar a post
 
 clienteRouter.get('/visible/clientes/:visible', getAllClientesVisible);
 

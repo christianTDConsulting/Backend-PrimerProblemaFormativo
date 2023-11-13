@@ -1,4 +1,4 @@
-import { logs } from '@prisma/client';
+
 import {db} from '../database/database'
 
 
@@ -86,31 +86,9 @@ function verUsuariosService(){
         throw error;
     }
 }
-function verLogsService(){
-    try{
-        return db.logs.findMany({
-            orderBy: {
-                fecha: 'desc', 
-            },
-        });
-
-    }catch(error){
-        console.error('Error al obtener logs:', error);
-        throw error;
-    }
-}
 
 
-function postLogService(Log: logs){
-    try{
-        return db.logs.create({
-            data: Log
-        })
-    }catch(error){
-        console.error('Error al crear el log:', error);
-        throw error;
-    }
-}
+
 
 function getUsuarioByIdService(id: number){
     try{
@@ -125,23 +103,7 @@ function getUsuarioByIdService(id: number){
     }
 }
 
- function findLogByEmailService(email:string) {
-    return db.logs.findUnique({
-        where: {
-            email: email
-        }
-    })
-  }
-
-  function updateLogService(logId: number, intentos: number, ultimaFecha: Date) {
-    return db.logs.update({
-      where: { id: logId },
-      data: {
-        intentos: intentos,
-        fecha: ultimaFecha,
-      },
-    });
-  }
+ 
   function getClienteFromUserService( id_usuario: number) {
     //Me devuelve todos los clientes que pueda tener asociado un usuario
     return  db.clientes.findUnique({
@@ -170,11 +132,7 @@ export {
     getUserByEmailService,
     editarUsuarioService,
     verUsuariosService,
-    verLogsService,
-    postLogService,
     getUsuarioByIdService,
-    findLogByEmailService,
-    updateLogService,
     crearAdminService,
     getClienteFromUserService,
     getUserByIdService

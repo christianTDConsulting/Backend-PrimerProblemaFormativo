@@ -40,12 +40,11 @@ model consumos {
 }
 
 model logs {
-  id       Int      @id @default(autoincrement())
-  fecha    DateTime @db.Date
-  email    String   @unique(map: "email") @default("") @db.VarChar(60)
-  intentos Int?
-  exito    Boolean? @db.Bit(1)
-  ip       String?  @db.VarChar(50)
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime @default(now()) @db.Date
+  email      String   @default("") @db.VarChar(60)
+  exito      Boolean? @db.Bit(1)
+  ip_address String?  @db.VarChar(50)
 }
 
 model usuarios {
@@ -59,4 +58,10 @@ model usuarios {
 model perfiles {
   id  Int     @id
   rol String? @db.VarChar(50)
+}
+
+model bloqueos {
+  id          Int       @id @default(autoincrement())
+  ip_address  String?   @unique(map: "ip_address") @db.VarChar(50)
+  fecha_hasta DateTime? @default(now()) @db.Date
 }

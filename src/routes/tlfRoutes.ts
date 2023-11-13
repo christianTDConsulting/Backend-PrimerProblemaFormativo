@@ -25,7 +25,7 @@ tlfRouter.put('/telefonos', editTelefonos);
 
 tlfRouter.put('/telefonos/:id', toggleVisibility);
 
-tlfRouter.get('/visible/telefonos/:visible', getAllVisibleTelefonos);
+tlfRouter.get('/visible/telefonos/:visible', getAllVisibleTelefonos); //cambiar a post
 tlfRouter.get('/visible/telefonos/:id/:visible', getVisibleTelefonosFromCliente);
 
 export default tlfRouter;

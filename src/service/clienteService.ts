@@ -18,12 +18,16 @@ function getAllVisibleClienteService(visible:boolean){
   }
 }
 function getClienteByIdService(clienteId:number){
-    
+  try{
     return db.clientes.findUnique({
         where: {
           id: clienteId,
         },
       });
+    }catch(error){
+      console.error('Error al obtener cliente por id:', error);
+      throw error;
+    }
 }
 function createClienteService(nuevoCliente:clientes){
           
@@ -74,7 +78,7 @@ function editarClienteService(clienteActualizado:clientes) {
         nombre: clienteActualizado.nombre,
         bio: clienteActualizado.bio,
         nacimiento: clienteActualizado.nacimiento,
-        visible: true,
+        visible: clienteActualizado.visible,
         id_usuario: clienteActualizado.id_usuario
       },
     });
