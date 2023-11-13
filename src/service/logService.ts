@@ -56,7 +56,7 @@ function getBloqueoByIPService(ip_address: string){
       where: {
         ip_address: ip_address,
         fecha_hasta: {
-          lte: new Date(),
+          gte: new Date(),
         },
       },
     });
@@ -131,7 +131,7 @@ function countFailedLoginAttemptsByIp(ip_address: string){
               exito: false,
               ip_address: ip_address,
               fecha: {
-                lte: minutesAgo,
+                gte: minutesAgo,
               }
             }
           })
