@@ -162,6 +162,7 @@ async function handleFailedLogin(email: string, ip_address: string) {
   const failedLoginCount = await countFailedLoginAttemptsByIp(ip_address);
   console.log(failedLoginCount);
   if (failedLoginCount >= intentosBloqueo) {
+    console.log('IP bloqueada');
     await blockIP(ip_address);
   }
 }
@@ -200,7 +201,7 @@ async function isIPBlocked(ip_address: string): Promise<boolean> {
     const now = new Date();
  
   // IP bloqueada si la diferencia es menor o igual a 5 minutos entre la fecha del bloqueo con la fecha actual
-    return now >=  block.fecha_hasta;
+    return now <=  block.fecha_hasta;
   }
 
   return false; // IP no bloqueada
