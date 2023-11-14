@@ -8,7 +8,7 @@ import {
   editarClienteService,
   getAllVisibleClienteService,
 } from '../service/clienteService';
-import { getUserByIdService } from '../service/usuarioService';
+import { getUserByIdService, deleteUserByIdService } from '../service/usuarioService';
 
 /**
  * Obtiene todos los clientes con información adicional del usuario asociado.
@@ -21,24 +21,43 @@ async function getAllClientes(_req: Request, res: Response) {
 
     const formattedClientes = await Promise.all(
       clientes.map(async (cliente) => {
-        const usuario = await getUserByIdService(cliente.id_usuario);
-        return {
-          id: cliente.id,
-          usuario: usuario,
-          nombre: cliente.nombre,
-          bio: cliente.bio,
-          nacimiento: cliente.nacimiento,
-          visible: cliente.visible,
-        };
+        try {
+          if (!cliente.id_usuario) {
+            return {
+              id: cliente.id,
+              nombre: cliente.nombre,
+              bio: cliente.bio,
+              nacimiento: cliente.nacimiento,
+              visible: cliente.visible,
+            };
+          }
+          
+          const usuario = await getUserByIdService(cliente.id_usuario);
+          return {
+            id: cliente.id,
+            usuario: usuario,
+            nombre: cliente.nombre,
+            bio: cliente.bio,
+            nacimiento: cliente.nacimiento,
+            visible: cliente.visible,
+          };
+        } catch (error) {
+          console.error('Error al procesar el cliente con id: ' + cliente.id, error);
+          return null; // O maneja el error de otra manera
+        }
       })
     );
 
-    res.status(200).json(formattedClientes); // Retorna todos los clientes encontrados
+    // Filtra los resultados nulos 
+    const filteredClientes = formattedClientes.filter((cliente) => cliente !== null);
+
+    res.status(200).json(filteredClientes);
   } catch (error) {
-    console.error('Error al obtener clientes');
-    res.status(500).json(error);
+    console.error('Error al obtener clientes: ' +  error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
+
 
 /**
  * Obtiene un cliente por su ID con información adicional del usuario asociado.
@@ -48,27 +67,49 @@ async function getAllClientes(_req: Request, res: Response) {
 async function getClienteById(req: Request, res: Response) {
   try {
     const clienteId = parseInt(req.params.id);
+
+    if (isNaN(clienteId)) {
+      res.status(400).json({ error: 'ID de cliente no válido' });
+      return;
+    }
+
     const cliente = await getClienteByIdService(clienteId);
 
     if (!cliente) {
       res.status(404).json({ error: 'Cliente no encontrado' });
-    } else {
-      const usuario = await getUserByIdService(cliente.id_usuario);
-      const formattedCliente = {
+      return;
+    }
+
+    let formattedCliente;
+
+    if (!cliente.id_usuario) {
+      formattedCliente = {
         id: cliente.id,
-        usuario: usuario,
         nombre: cliente.nombre,
         bio: cliente.bio,
         nacimiento: cliente.nacimiento,
         visible: cliente.visible,
       };
-      res.status(200).json(formattedCliente); // Envía el cliente como respuesta JSON
+    } else {
+      const usuario = await getUserByIdService(cliente.id_usuario);
+      formattedCliente = {
+        id: cliente.id,
+        usuario: usuario || null,
+        nombre: cliente.nombre,
+        bio: cliente.bio,
+        nacimiento: cliente.nacimiento,
+        visible: cliente.visible,
+      };
     }
+
+    res.status(200).json(formattedCliente);
   } catch (error) {
-    console.error('Error al obtener cliente ', error);
-    res.status(500).json(error);
+    console.error('Error al obtener cliente:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
+
+
 
 /**
  * Crea un nuevo cliente en la base de datos.
@@ -165,21 +206,49 @@ async function editarCliente(req: Request, res: Response) {
  */
 async function toggleVisibility(req: Request, res: Response) {
   try {
-    const id = parseInt(req.params.id);
+    const { id, id_usuario } = req.body;
+
     const clienteExistente = await getClienteByIdService(id);
+
     if (!clienteExistente) {
-      res.status(404).json({ error: 'Cliente  no encontrado' });
-    } else {
-      clienteExistente.visible = !clienteExistente.visible;
-      const updatedCliente = await editarClienteService(clienteExistente);
-      res.status(200).json(updatedCliente);
-      console.log("telefono Editado");
+      res.status(404).json({ error: 'Cliente no encontrado' });
+      return;
     }
+
+    // id actual del usuario del cliente
+    const usuario_id = clienteExistente.id_usuario;
+
+    // Cambio de visibilidad
+    clienteExistente.visible = !clienteExistente.visible;
+
+    // Asignación o quita de usuario según la visibilidad
+    if (clienteExistente.visible === true) { // asignar usuario
+      if (id_usuario !== undefined) {
+        clienteExistente.id_usuario = id_usuario;
+      }
+
+    } else { // quitar usuario
+      clienteExistente.id_usuario = null;
+      if (usuario_id !== undefined && usuario_id !== null) {
+        // Editar el cliente antes de borrar el usuario
+        const updatedCliente = await editarClienteService(clienteExistente);
+        // Borrar el usuario después de editar el cliente
+        await deleteUserByIdService(usuario_id);
+        res.status(200).json(updatedCliente);
+        return;
+      }
+    }
+
+    // Editar el cliente si no se ha borrado el usuario
+    const updatedCliente = await editarClienteService(clienteExistente);
+    res.status(200).json(updatedCliente);
+
   } catch (error) {
-    console.error('Error al cambiar visibilidad  del cliente:', error);
-    res.status(500).json({ error: 'Error al cambiar visibilidad  del cliente' });
+    console.error('Error al cambiar la visibilidad del cliente:', error);
+    res.status(500).json({ error: 'Error interno al cambiar la visibilidad del cliente' });
   }
 }
+
 
 /**
  * Obtiene todos los clientes visibles o no visibles en la base de datos.
@@ -195,7 +264,12 @@ async function getAllClientesVisible(req: Request, res: Response) {
 
     const formattedClientes = await Promise.all(
       clientes.map(async (cliente) => {
-        const usuario = await getUserByIdService(cliente.id_usuario);
+        let usuario = null;
+
+        if (cliente.id_usuario) {
+          usuario = await getUserByIdService(cliente.id_usuario);
+        }
+
         return {
           id: cliente.id,
           usuario: usuario,

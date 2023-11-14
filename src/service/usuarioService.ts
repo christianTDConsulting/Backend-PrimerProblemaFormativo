@@ -126,6 +126,18 @@ function getUsuarioByIdService(id: number){
     }
 }
 
+function deleteUserByIdService(id: number){
+    try{
+        return db.usuarios.delete({
+            where: {
+                id: id
+            }
+        })
+    }catch(error){
+        console.error('Error al borrar el usuario:', error);
+        throw error;
+    }
+}
  
 export {
     crearUsuarioService,
@@ -135,5 +147,6 @@ export {
     getUsuarioByIdService,
     crearAdminService,
     getClienteFromUserService,
-    getUserByIdService
+    getUserByIdService,
+    deleteUserByIdService
 }

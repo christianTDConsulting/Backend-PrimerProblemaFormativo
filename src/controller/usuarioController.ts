@@ -18,8 +18,10 @@ countFailedLoginAttemptsByIp
 
 } from '../service/logService';
 
+import * as crypto from 'crypto';
+
 import { createClienteService } from '../service/clienteService';
-import * as bcrypt from 'bcryptjs';
+
 import * as jwt from 'jsonwebtoken';
 
 import { JwtPayload } from 'jsonwebtoken';
@@ -32,8 +34,9 @@ import { JwtPayload } from 'jsonwebtoken';
 async function crearUsuario(req: Request, res: Response) {
   try {
     const credentials = req.body;
-    const saltRounds = 10;
-    const hashedPassword = bcrypt.hashSync(credentials.plainPassword, saltRounds);
+   // const saltRounds = 10;
+   // const hashedPassword = bcrypt.hashSync(credentials.plainPassword, saltRounds);
+   const  hashedPassword  = hashPassword(credentials.plainPassword);
     await crearUsuarioService(hashedPassword, credentials.email);
     res.status(201).json({ message: 'Usuario creado' });
     console.log('Usuario creado');
@@ -51,8 +54,9 @@ async function crearUsuario(req: Request, res: Response) {
 async function crearAdmin(req: Request, res: Response) {
   try {
     const credentials = req.body;
-    const saltRounds = 10;
-    const hashedPassword = bcrypt.hashSync(credentials.plainPassword, saltRounds);
+    //const saltRounds = 10;
+    //const hashedPassword = bcrypt.hashSync(credentials.plainPassword, saltRounds);
+    const  hashedPassword  = hashPassword(credentials.password);
     await crearAdminService(hashedPassword, credentials.email);
     res.status(201).json({ message: 'Admin creado' });
     console.log('Admin creado');
@@ -70,8 +74,11 @@ async function crearAdmin(req: Request, res: Response) {
 async function editarUsuario(req: Request, res: Response) {
   try {
     const usuario = req.body; // Se pasa un usuario con una plainPassword
-    const saltRounds = 10;
-    const hashedPassword = bcrypt.hashSync(usuario.password, saltRounds);
+    //const saltRounds = 10;
+    //const hashedPassword = bcrypt.hashSync(usuario.password, saltRounds);
+    
+    const  hashedPassword  = hashPassword(usuario.password);
+
     await editarUsuarioService(usuario.id, hashedPassword, usuario.email);
     res.status(201).json({ message: 'Usuario editado' });
     console.log('Usuario editado');
@@ -121,8 +128,8 @@ async function verificarUsuario(req: Request, res: Response) {
       return res.status(401).json({ message: 'Credenciales incorrectas' }); // 401 Unauthorized
     }
    // Manejar caso: Usuario existe
-
-    const passwordMatches = bcrypt.compareSync(plainPassword, user.password);
+   
+    const passwordMatches =  checkPassword(plainPassword, user.password);
     // Manejar caso: Contraseña incorrecta
     if (!passwordMatches) {
       await handleFailedLogin(email, ip_address);
@@ -335,8 +342,9 @@ async function crearUsuarioYCliente(req: Request, res: Response) {
       res.status(400).json({ error: 'El usuario ya existe' });
     } else {
       // Crea el usuario en la base de datos
-      const saltRounds = 10;
-      const hashedPassword = bcrypt.hashSync(usuarioData.plainPassword, saltRounds);
+     // const saltRounds = 10;
+      //const hashedPassword = bcrypt.hashSync(usuarioData.plainPassword, saltRounds);
+      const hashedPassword = hashPassword(usuarioData.plainPassword);
       const nuevoUsuario = await crearUsuarioService(hashedPassword, usuarioData.email);
 
       // Crea el cliente en la base de datos y lo relaciona con el usuario
@@ -352,6 +360,26 @@ async function crearUsuarioYCliente(req: Request, res: Response) {
     console.error('Error al crear usuario y cliente', error);
     res.status(500).json({ error: 'Error al crear usuario y cliente' });
   }
+}
+/**
+ * Verifica si una contraseña coincide con una contraseña cifrada.
+ *@param plainPassword - La contraseña sin cifrar.
+ @param hashedPassword - La contraseña cifrada.
+ * @returns True si la contraseña coincide, False de lo contrario.
+ */
+function checkPassword(plainPassword: string, hashedPassword: string): boolean {
+  const hashedPasswordInput = hashPassword(plainPassword);
+  return hashedPassword === hashedPasswordInput;
+}
+/**
+ * Cifra una contraseña usando sha 256.
+ * @param password - La contraseña sin cifrar.
+ * @returns La contraseña cifrada.
+ */	
+function hashPassword(password: string): string {
+  const hash = crypto.createHmac('sha256', process.env.HASH_SECRET!);
+  hash.update(password);
+  return hash.digest('hex');
 }
 
 export {
