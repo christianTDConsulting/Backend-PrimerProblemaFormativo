@@ -193,18 +193,20 @@ async function handleSuccessfulLogin(email: string, ip_address: string) {
  * @returns `true` si la IP está bloqueada, `false` si no está bloqueada.
  */
 async function isIPBlocked(ip_address: string): Promise<boolean> {
-  // Consulta el registro de bloqueo por la dirección IP.
-  const block = await getBloqueoByIPService(ip_address);
+  try {
+    const block = await getBloqueoByIPService(ip_address);
 
-  // Verifica si la IP está bloqueada y el bloqueo es válido.
-  if (block && block.fecha_hasta) {
-    const now = new Date();
- 
-  // IP bloqueada si la diferencia es menor o igual a 5 minutos entre la fecha del bloqueo con la fecha actual
-    return now <=  block.fecha_hasta;
+    if (block && block.fecha_hasta) {
+      const now = new Date();
+
+      return now <= block.fecha_hasta;
+    }
+
+    return false; // IP no bloqueada
+  } catch (error) {
+    console.log(error);
+    return false; // Manejar el error según tus necesidades
   }
-
-  return false; // IP no bloqueada
 }
 
 /**
@@ -213,13 +215,18 @@ async function isIPBlocked(ip_address: string): Promise<boolean> {
  * * @param bloqueo_hasta - La fecha hasta la cual se bloqueará la IP.
  */
 async function blockIP(ip_address: string): Promise<void> {
-  const minutesBloqueados = parseInt(process.env.MINUTOS_BLOQUEO || '5', 10); // Minutos de bloqueo
-  
-  const bloqueo_hasta = new Date();
-  bloqueo_hasta.setMinutes(bloqueo_hasta.getMinutes() + minutesBloqueados);
+  try{
+    const minutesBloqueados = parseInt(process.env.MINUTOS_BLOQUEO || '5', 10); // Minutos de bloqueo
+    
+    const bloqueo_hasta = new Date();
+    bloqueo_hasta.setMinutes(bloqueo_hasta.getMinutes() + minutesBloqueados);
 
-  // Crea un nuevo registro de bloqueo en la base de datos.
-  await createBloqueo( ip_address, bloqueo_hasta );
+    // Crea un nuevo registro de bloqueo en la base de datos.
+    await createBloqueo( ip_address, bloqueo_hasta );
+  }catch(error){
+    console.log(error);
+    throw error;
+  }
 }
 
 /**
