@@ -11,7 +11,7 @@ import {
 } from '../service/metereologiaService';
 
 import axios from 'axios';
-import { metereologia } from '@prisma/client';
+import { metereologia, municipios } from '@prisma/client';
 import { differenceInDays } from 'date-fns';
 /**
  * Devuelve API_KEY para acceder al servidor AETER.
@@ -186,22 +186,27 @@ async function insertarDetalles(datosResponse: any) {
       const fechaActual = new Date();
 
       const metereologiaMasNueva =  await ObtenerMetereologiaRecienteService(municipioExistente.id);
-      if (metereologiaMasNueva){ //debe de existir al menos una, si no, no habría municipio
-       const fechaGuardado = metereologiaMasNueva[0].fecha_guardado!;
-       const diferenciaDias = differenceInDays(fechaActual, fechaGuardado);
+      if (metereologiaMasNueva){ //existe meterelogia, no se debe de crear
 
-       if (diferenciaDias < 1) {
-        console.log('La información ya se encuentra guardada en la base de datos.');
-       }else{
-        procesarYAlmacenarDetalles(datosResponse);
+        const fechaGuardado = metereologiaMasNueva[0].fecha_guardado!;
+        const diferenciaDias = differenceInDays(fechaActual, fechaGuardado);
+
+        if (diferenciaDias < 1) {
+          console.log('La información ya se encuentra guardada en la base de datos.');
+        }else{
+          procesarYAlmacenarDetalles(datosResponse, municipioExistente);
+        }
+        
+      }else{//no existe ninguna metereologia
+        procesarYAlmacenarDetalles(datosResponse, municipioExistente);
       }
      
-    } else {
-      procesarYAlmacenarDetalles(datosResponse);
+    } else { // El municipio no existe en la base de datos, se debe de crear
+      procesarYAlmacenarDetalles(datosResponse, municipioExistente);
     }
   
 }
-}
+
 
 
 /**
@@ -209,29 +214,32 @@ async function insertarDetalles(datosResponse: any) {
  *
  * @param datosResponse - Datos de predicción meteorológica proporcionados por AEMET.
  */
-async function procesarYAlmacenarDetalles(datosResponse: any): Promise<void> {
+async function procesarYAlmacenarDetalles(datosResponse: any, municipioExistente: any): Promise<void> {
   try {
-    // Obtén el nombre y la provincia en formato UTF-8
-    const nombreUtf8 = Buffer.from(datosResponse.nombre, 'latin1').toString('utf-8');
-    const provinciaUtf8 = Buffer.from(datosResponse.provincia, 'latin1').toString('utf-8');
+    if (!municipioExistente){ // si no existe el municipio, lo crea
+      // Obtén el nombre y la provincia en formato UTF-8
+      const nombreUtf8 = Buffer.from(datosResponse.nombre, 'latin1').toString('utf-8');
+      const provinciaUtf8 = Buffer.from(datosResponse.provincia, 'latin1').toString('utf-8');
 
-    // Elimina los caracteres irreconocibles
-    const nombreLimpiado = nombreUtf8.replace(/\uFFFD/g, '-');
-    const provinciaLimpiada = provinciaUtf8.replace(/\uFFFD/g, '-');
+      // Elimina los caracteres irreconocibles
+      const nombreLimpiado = nombreUtf8.replace(/\uFFFD/g, '-');
+      const provinciaLimpiada = provinciaUtf8.replace(/\uFFFD/g, '-');
 
-    // Crear el municipio
-    const municipio = {
-      id: datosResponse.id.toString(),
-      nombre: nombreLimpiado,
-      provincia: provinciaLimpiada,
-    };
-
-    // Insertar el municipio
-    await insertarMunicipio(municipio);
+      // Crear el municipio
+      const municipio = {
+        id: datosResponse.id.toString(),
+        nombre: nombreLimpiado,
+        provincia: provinciaLimpiada,
+      };
+      
+      // Insertar el municipio
+      await insertarMunicipio(municipio);
+    }
+   
 
     // Crear registro de meteorología asociado al municipio
     const metereologia = {
-      id_municipio: municipio.id,
+      id_municipio: datosResponse.id.toString(),
       // Puedes agregar otros campos según sea necesario, como fecha guardada automáticamente con current_timestamp()
     };
 
