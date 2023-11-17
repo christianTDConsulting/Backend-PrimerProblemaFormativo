@@ -4,7 +4,7 @@ import { getApiKey, updateMunicipioInfo, getDetallesByMunicipioCodeController, g
 const MetereoRouter:Router = express.Router();
 
 MetereoRouter.get('/apiKey',getApiKey);
-MetereoRouter.get('/addInfo/:codigo',updateMunicipioInfo);
+MetereoRouter.post('/addInfo/',updateMunicipioInfo);
 MetereoRouter.get('/municipios/:codigo',getMunicpioInfo);
 
 MetereoRouter.get('/detalles/:code', getDetallesByMunicipioCodeController);

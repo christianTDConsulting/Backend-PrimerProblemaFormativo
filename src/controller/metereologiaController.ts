@@ -122,7 +122,7 @@ async function getDetallesByCategoryNameAndMunicipioCodeController(req: Request,
 
 async function updateMunicipioInfo (req: Request, res: Response) {
     try {
-      const codigoMunicipio = req.params.codigo;
+      const codigoMunicipio = req.body;
       const apiKey = process.env.API_KEY!; // Reemplaza con tu API key de AEMET
       const headers = {
         'Accept': 'application/json',
