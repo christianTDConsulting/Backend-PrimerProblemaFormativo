@@ -20,6 +20,23 @@ async function getApiKey(_req: Request, res: Response){
 }
 
 /**
+ * Obtiene un municipio por su código.
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+
+async function getMunicpioInfo (req: Request, res: Response) {
+  try {
+    const municipioCode = req.params.code;
+    const municipio = await getMunicipioByCodigoService(municipioCode);
+    res.status(200).json(municipio);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching details by municipio code' });
+  }
+}
+
+/**
  * Obtener los municipios por código.
  * @param {Request} req -  Objeto Request de Express.
  * @param {Response} res - Objeto Response de Express.
@@ -404,5 +421,6 @@ export {
     insertarDetallesArray,
     getDetallesByMunicipioCodeController,
     getDetallesByCategoryNameAndMunicipioCodeController,
-    getDetallesByMunicipioCodeAndDateController
+    getDetallesByMunicipioCodeAndDateController,
+    getMunicpioInfo,
 }

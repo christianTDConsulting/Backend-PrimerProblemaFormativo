@@ -1,10 +1,12 @@
 import express, { Router } from 'express';
-import { getApiKey, updateMunicipioInfo, getDetallesByMunicipioCodeController, getDetallesByMunicipioCodeAndDateController, getDetallesByCategoryNameAndMunicipioCodeController} from '../controller/metereologiaController';
+import { getApiKey, updateMunicipioInfo, getDetallesByMunicipioCodeController, getDetallesByMunicipioCodeAndDateController, getDetallesByCategoryNameAndMunicipioCodeController, getMunicpioInfo} from '../controller/metereologiaController';
 
 const MetereoRouter:Router = express.Router();
 
 MetereoRouter.get('/apiKey',getApiKey);
 MetereoRouter.get('/addInfo/:codigo',updateMunicipioInfo);
+MetereoRouter.get('/municipio/:codigo',getMunicpioInfo);
+
 MetereoRouter.get('/detalles/:code', getDetallesByMunicipioCodeController);
 MetereoRouter.get('/detalles/:code/:fecha', getDetallesByMunicipioCodeAndDateController);
 MetereoRouter.get('/detalles/:code/name/:categoryName', getDetallesByCategoryNameAndMunicipioCodeController);
