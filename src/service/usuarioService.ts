@@ -138,7 +138,8 @@ function deleteUserByIdService(id: number){
         throw error;
     }
 }
- 
+
+
 export {
     crearUsuarioService,
     getUserByEmailService,
@@ -148,5 +149,6 @@ export {
     crearAdminService,
     getClienteFromUserService,
     getUserByIdService,
-    deleteUserByIdService
+    deleteUserByIdService,
+
 }

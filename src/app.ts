@@ -5,6 +5,7 @@ import consumoRouter from './routes/consumoRoutes';
 import authRouter from './routes/AuthRouter';
 import usuarioRouter from './routes/usuarioRouter';
 import logsRouter from './routes/logsRouter';
+import MetereoRouter from './routes/metereologiaRouter'
 import cors from 'cors';
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/', consumoRouter);
 app.use('/', authRouter);
 app.use('/', usuarioRouter);
 app.use('/', logsRouter);
+app.use('/', MetereoRouter )
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);

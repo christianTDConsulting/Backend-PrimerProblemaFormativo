@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model bloqueos {
+  id          Int       @id @default(autoincrement())
+  ip_address  String?   @db.VarChar(50)
+  fecha_hasta DateTime? @db.Timestamp(0)
+}
+
 model clientes {
   id         Int         @id @default(autoincrement())
   nombre     String?     @db.VarChar(50)
@@ -14,8 +20,54 @@ model clientes {
   id_usuario Int?        @unique(map: "id_usuario")
   nacimiento DateTime    @db.Date
   visible    Boolean     @default(dbgenerated("(b'1')")) @db.Bit(1)
-  usuario    usuarios?   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuario")
+  usuarios   usuarios?   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_clientes_usuarios")
   telefonos  telefonos[]
+}
+
+model consumos {
+  id          Int       @id @default(autoincrement())
+  id_telefono Int
+  consumo     Float     @default(0)
+  fecha       DateTime  @db.Date
+  telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: NoAction, map: "FK_gastos_telefonos")
+
+  @@index([id_telefono], map: "FK_gastos_telefonos")
+}
+
+model detalles_prediccion {
+  id           BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  municipio_id String?     @db.VarChar(255)
+  fecha        DateTime    @default(now()) @db.Timestamp(0)
+  nombre       String?     @db.VarChar(50)
+  valor        String?     @db.VarChar(50)
+  periodo      String?     @db.VarChar(50)
+  descripcion  String?     @db.VarChar(50)
+  hora         Int?
+  velocidad    Int?
+  direccion    String?     @db.VarChar(50)
+  municipios   municipios? @relation(fields: [municipio_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "detalles_prediccion_ibfk_1")
+
+  @@index([municipio_id], map: "municipio_id")
+}
+
+model logs {
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime @default(now()) @db.Timestamp(0)
+  email      String   @default("") @db.VarChar(60)
+  exito      Boolean  @db.Bit(1)
+  ip_address String   @db.VarChar(50)
+}
+
+model municipios {
+  id                  String                @id @db.VarChar(255)
+  nombre              String?               @db.VarChar(255)
+  provincia           String?               @db.VarChar(255)
+  detalles_prediccion detalles_prediccion[]
+}
+
+model perfiles {
+  id  Int     @id
+  rol String? @db.VarChar(50)
 }
 
 model telefonos {
@@ -29,39 +81,10 @@ model telefonos {
   @@index([id_cliente], map: "FK__clientes")
 }
 
-model consumos {
-  id          Int       @id @default(autoincrement())
-  id_telefono Int
-  consumo     Float     @default(0)
-  fecha       DateTime  @db.Date
-  telefonos   telefonos @relation(fields: [id_telefono], references: [id], onDelete: NoAction, map: "FK_gastos_telefonos")
-
-  @@index([id_telefono], map: "FK_gastos_telefonos")
-}
-
-model logs {
-  id         Int      @id @default(autoincrement())
-  fecha      DateTime @default(now()) @db.Timestamp(0)
-  email      String   @default("") @db.VarChar(60)
-  exito      Boolean  @db.Bit(1)
-  ip_address String   @db.VarChar(50)
-}
-
 model usuarios {
   id        Int       @id @default(autoincrement())
-  password  String    @db.VarChar(60)
+  password  String    @db.VarChar(300)
   email     String    @unique(map: "email") @db.VarChar(50)
   id_perfil Int?
   clientes  clientes?
-}
-
-model perfiles {
-  id  Int     @id
-  rol String? @db.VarChar(50)
-}
-
-model bloqueos {
-  id          Int       @id @default(autoincrement())
-  ip_address  String?   @db.VarChar(50)
-  fecha_hasta DateTime? @db.Timestamp(0)
 }
