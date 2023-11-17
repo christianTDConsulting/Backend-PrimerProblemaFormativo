@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { transporter } from "../../config/mailer";
+import { transporter } from "../config/mailer";
 
 /**
  * Envía un correo electrónico con un archivo adjunto.
