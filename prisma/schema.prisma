@@ -35,7 +35,7 @@ model consumos {
 }
 
 model detalles_prediccion {
-  id           BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  id           Int         @id @default(autoincrement()) @db.UnsignedInt
   municipio_id String?     @db.VarChar(255)
   fecha        DateTime    @default(now()) @db.Timestamp(0)
   nombre       String?     @db.VarChar(50)

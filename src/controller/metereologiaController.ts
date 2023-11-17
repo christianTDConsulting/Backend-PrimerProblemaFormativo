@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import {
   insertarMunicipio,
   insertarDetallesArray,
-  getMunicipioByCodigoService
+  getMunicipioByCodigoService,
+  getDetallesByMunicipioCode,
+  getDetallesByMunicipioCodeAndDate,
+  getDetallesByCategoryNameAndMunicipioCode 
 } from '../service/metereologiaService';
 
 import axios from 'axios';
@@ -15,6 +18,80 @@ import axios from 'axios';
 async function getApiKey(_req: Request, res: Response){
     res.status(200).json(process.env.API_KEY!); 
 }
+
+/**
+ * Obtener los municipios por código.
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+
+async function getDetallesByMunicipioCodeController(req: Request, res: Response): Promise<void> {
+  try {
+    const municipioCode = req.params.code;
+    const detalles = await getDetallesByMunicipioCode(municipioCode);
+    console.log(detalles);
+    res.status(200).json(detalles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching details by municipio code' });
+  }
+}
+
+/**
+ * Obtener detalles por código de municipio y fecha
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express. 
+ */
+async function getDetallesByMunicipioCodeAndDateController(req: Request, res: Response): Promise<void> {
+  try {
+    const municipioCode = req.params.code;
+
+   //string format /ddMMyyyy
+    const day = parseInt(req.params.fecha.slice(0, 2), 10);
+    console.log(day);
+    const month = parseInt(req.params.fecha.slice(2, 4), 10) -1; // month is 0-indexed
+    console.log(month);
+    const year = parseInt(req.params.fecha.slice(4,8), 10);
+    console.log(year);
+
+    // Validate the parsed date components
+    if (isNaN(day) || isNaN(month) || isNaN(year)) {
+      throw new Error('Invalid date components in the URL');
+    }
+
+   // console.log(day, month, year);
+    const fecha = new Date(year, month, day);
+    
+    const formattedDate = fecha.toLocaleDateString();
+    console.log(formattedDate, fecha);
+    
+ 
+    const detalles = await getDetallesByMunicipioCodeAndDate(municipioCode, fecha);
+    res.status(200).json(detalles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching details by municipio code and date' });
+  }
+}
+
+/**
+ * Obtener los detalles por código de municipio y categoria
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express. 
+
+ */
+async function getDetallesByCategoryNameAndMunicipioCodeController(req: Request, res: Response): Promise<void> {
+  try {
+    const categoryName = req.params.categoryName;
+    const municipioCode = req.params.code;
+    const detalles = await getDetallesByCategoryNameAndMunicipioCode(categoryName, municipioCode);
+    res.status(200).json(detalles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching details by category name and municipio code' });
+  }
+}
+
 
 
 /**
@@ -84,7 +161,7 @@ async function insertarDetalles(datosResponse: any){
     if ( municipioExistente ) {
       console.log('El municipio ya existe en la base de datos.');
       //actualizar el municipio
-      
+
     }else{
       await insertarMunicipio(municipio);
       await insertarDetallesArray(detallesArray);
@@ -321,6 +398,11 @@ async function getIndexedData(datosResponse: any) {
 
 export {
     getApiKey,
-    updateMunicipioInfo
-    
+    updateMunicipioInfo,
+    insertarDetalles,
+    insertarMunicipio,
+    insertarDetallesArray,
+    getDetallesByMunicipioCodeController,
+    getDetallesByCategoryNameAndMunicipioCodeController,
+    getDetallesByMunicipioCodeAndDateController
 }

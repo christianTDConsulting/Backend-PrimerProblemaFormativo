@@ -74,9 +74,40 @@ async function getMunicipioByCodigoService (codigo: string) {
   }
   
   async function actualizarDetalle(detalle: any) {
-
-    
+    return detalle;
+    /*Por terminar */
   }
+
+  async function getDetallesByMunicipioCode(municipioCode: string) {
+    return db.detalles_prediccion.findMany({
+      where: {
+        municipio_id: municipioCode,
+      },
+    });
+  }
+
+  async function getDetallesByMunicipioCodeAndDate(municipioCode: string, fecha: Date) {
+    
+   
+    return db.detalles_prediccion.findMany({
+      where: {
+        municipio_id: municipioCode,
+        fecha: fecha,
+      },
+    });
+  }
+  
+  async function getDetallesByCategoryNameAndMunicipioCode(categoryName: string, municipioCode: string) {
+    return db.detalles_prediccion.findMany({
+      where: {
+        nombre: categoryName,
+        municipio_id: municipioCode,
+      },
+    });
+  }
+  
+
+
   
  export { 
     insertarMunicipio,
@@ -84,6 +115,9 @@ async function getMunicipioByCodigoService (codigo: string) {
     insertarDetallesArray,
     getMunicipioByCodigoService,
     obtenerDetalleExistente,
-    actualizarDetalle
+    actualizarDetalle,
+    getDetallesByMunicipioCode,
+    getDetallesByMunicipioCodeAndDate,
+    getDetallesByCategoryNameAndMunicipioCode
 };
   
