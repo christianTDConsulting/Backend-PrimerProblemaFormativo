@@ -35,19 +35,19 @@ model consumos {
 }
 
 model detalles_prediccion {
-  id           Int         @id @default(autoincrement()) @db.UnsignedInt
-  municipio_id String?     @db.VarChar(255)
-  fecha        DateTime    @default(now()) @db.Timestamp(0)
-  nombre       String?     @db.VarChar(50)
-  valor        String?     @db.VarChar(50)
-  periodo      String?     @db.VarChar(50)
-  descripcion  String?     @db.VarChar(50)
-  hora         Int?
-  velocidad    Int?
-  direccion    String?     @db.VarChar(50)
-  municipios   municipios? @relation(fields: [municipio_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "detalles_prediccion_ibfk_1")
+  id              Int           @id @default(autoincrement()) @db.UnsignedInt
+  id_metereologia Int?
+  fecha           DateTime      @default(now()) @db.Timestamp(0)
+  nombre          String?       @db.VarChar(50)
+  valor           String?       @db.VarChar(50)
+  periodo         String?       @db.VarChar(50)
+  descripcion     String?       @db.VarChar(50)
+  hora            Int?
+  velocidad       Int?
+  direccion       String?       @db.VarChar(50)
+  metereologia    metereologia? @relation(fields: [id_metereologia], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_detalles_prediccion_metereologia")
 
-  @@index([municipio_id], map: "municipio_id")
+  @@index([id_metereologia], map: "FK_detalles_prediccion_metereologia")
 }
 
 model logs {
@@ -59,10 +59,10 @@ model logs {
 }
 
 model municipios {
-  id                  String                @id @db.VarChar(255)
-  nombre              String?               @db.VarChar(255)
-  provincia           String?               @db.VarChar(255)
-  detalles_prediccion detalles_prediccion[]
+  id           String         @id @db.VarChar(50)
+  nombre       String?        @db.VarChar(255)
+  provincia    String?        @db.VarChar(255)
+  metereologia metereologia[]
 }
 
 model perfiles {
@@ -87,4 +87,14 @@ model usuarios {
   email     String    @unique(map: "email") @db.VarChar(50)
   id_perfil Int?
   clientes  clientes?
+}
+
+model metereologia {
+  id                  Int                   @id @default(autoincrement())
+  id_municipio        String?               @db.VarChar(50)
+  fecha_guardado      DateTime?             @default(now()) @db.Date
+  detalles_prediccion detalles_prediccion[]
+  municipios          municipios?           @relation(fields: [id_municipio], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_metereologia_municipios")
+
+  @@index([id_municipio], map: "FK_metereologia_municipios")
 }

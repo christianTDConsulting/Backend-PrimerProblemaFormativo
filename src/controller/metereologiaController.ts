@@ -5,11 +5,14 @@ import {
   getMunicipioByCodigoService,
   getDetallesByMunicipioCode,
   getDetallesByMunicipioCodeAndDate,
-  getDetallesByCategoryNameAndMunicipioCode 
+  getDetallesByCategoryNameAndMunicipioCode ,
+  insertarMetereologiaService,
+  ObtenerMetereologiaRecienteService
 } from '../service/metereologiaService';
 
 import axios from 'axios';
-
+import { metereologia } from '@prisma/client';
+import { differenceInDays } from 'date-fns';
 /**
  * Devuelve API_KEY para acceder al servidor AETER.
  * @param _req - Objeto Request de Express (no utilizado).
@@ -170,30 +173,80 @@ async function updateMunicipioInfo (req: Request, res: Response) {
  * @param datosResponse - json que devuelve aemet con las predicciones del municipio.
  */
 
-async function insertarDetalles(datosResponse: any){
-  const {municipio, detallesArray} = await getIndexedData(datosResponse);
-  
-  try {
-    const municipioExistente = await getMunicipioByCodigoService(municipio.id); 
-    if ( municipioExistente ) {
+async function insertarDetalles(datosResponse: any) {
+
+    const idMunicipio = datosResponse.id.toString();
+
+    // Verificar si el municipio ya existe en la base de datos
+    const municipioExistente = await getMunicipioByCodigoService(idMunicipio);
+
+    if (municipioExistente) {
       console.log('El municipio ya existe en la base de datos.');
-      //actualizar el municipio
+      
+      const fechaActual = new Date();
 
-    }else{
-      await insertarMunicipio(municipio);
-      await insertarDetallesArray(detallesArray);
+      const metereologiaMasNueva =  await ObtenerMetereologiaRecienteService(municipioExistente.id);
+      if (metereologiaMasNueva){ //debe de existir al menos una, si no, no habría municipio
+       const fechaGuardado = metereologiaMasNueva[0].fecha_guardado!;
+       const diferenciaDias = differenceInDays(fechaActual, fechaGuardado);
+
+       if (diferenciaDias < 1) {
+        console.log('La información ya se encuentra guardada en la base de datos.');
+       }else{
+        procesarYAlmacenarDetalles(datosResponse);
+      }
+     
+    } else {
+      procesarYAlmacenarDetalles(datosResponse);
     }
-
-   
   
-  } catch (error) {
-    console.error('Error al actualizar información del municipio', error);
-    throw error;
-  }
-   
-
+}
 }
 
+
+/**
+ * Procesa y almacena los detalles de la predicción meteorológica en la base de datos.
+ *
+ * @param datosResponse - Datos de predicción meteorológica proporcionados por AEMET.
+ */
+async function procesarYAlmacenarDetalles(datosResponse: any): Promise<void> {
+  try {
+    // Obtén el nombre y la provincia en formato UTF-8
+    const nombreUtf8 = Buffer.from(datosResponse.nombre, 'latin1').toString('utf-8');
+    const provinciaUtf8 = Buffer.from(datosResponse.provincia, 'latin1').toString('utf-8');
+
+    // Elimina los caracteres irreconocibles
+    const nombreLimpiado = nombreUtf8.replace(/\uFFFD/g, '-');
+    const provinciaLimpiada = provinciaUtf8.replace(/\uFFFD/g, '-');
+
+    // Crear el municipio
+    const municipio = {
+      id: datosResponse.id.toString(),
+      nombre: nombreLimpiado,
+      provincia: provinciaLimpiada,
+    };
+
+    // Insertar el municipio
+    await insertarMunicipio(municipio);
+
+    // Crear registro de meteorología asociado al municipio
+    const metereologia = {
+      id_municipio: municipio.id,
+      // Puedes agregar otros campos según sea necesario, como fecha guardada automáticamente con current_timestamp()
+    };
+
+    const metereologiaInsertada = await insertarMetereologiaService(metereologia);
+
+    // Obtener detalles indexados
+    const detallesArray = await getIndexedData(datosResponse, metereologiaInsertada);
+
+    // Insertar detalles en la base de datos
+    await insertarDetallesArray(detallesArray);
+  } catch (error) {
+    console.error('Error al procesar y almacenar detalles:', error);
+    // Puedes manejar el error según tus necesidades, por ejemplo, lanzando una excepción o registrándola.
+  }
+}
 
 /**
  * Devuelve los datos indexados obtenidos de Aemet
@@ -202,35 +255,14 @@ async function insertarDetalles(datosResponse: any){
  * @return detallesArray - Array con los detalles de la predicción.
  */
 
-async function getIndexedData(datosResponse: any) {
-  const idMunicipio = datosResponse.id.toString();
-
-  // Obtén el nombre en formato Buffer
-  const nombreBuffer = Buffer.from(datosResponse.nombre, 'latin1');
-  const provinciaBuffer = Buffer.from(datosResponse.provincia, 'latin1');
-  // Convierte el Buffer a UTF-8
-  let nombreUtf8 = nombreBuffer.toString('utf-8');
-  let provinciaUtf8 = provinciaBuffer.toString('utf-8');
-
-  // Elimina los caracteres irreconocibles
-  nombreUtf8 = nombreUtf8.replace(/\uFFFD/g, '-');
-  provinciaUtf8 = provinciaUtf8.replace(/\uFFFD/g, '-');
-
+async function getIndexedData(datosResponse: any, metereologiaInsertada: metereologia) {
   
- 
-  //Insertar el municipio
-  const municipio = {
-    id: idMunicipio,
-    nombre: nombreUtf8,
-    provincia: provinciaUtf8,
-  };
-
  
   const detallesArray = [];
  
   for (const predicciones of datosResponse.prediccion.dia) {
     const comun = {
-      municipio_id: idMunicipio,
+      id_metereologia: metereologiaInsertada.id,
       fecha: new Date(predicciones.fecha),
     }
 
@@ -410,17 +442,14 @@ async function getIndexedData(datosResponse: any) {
       }
     }
 
-    return {municipio, detallesArray};
+    return detallesArray;
 }
 
 export {
-    getApiKey,
-    updateMunicipioInfo,
-    insertarDetalles,
-    insertarMunicipio,
-    insertarDetallesArray,
-    getDetallesByMunicipioCodeController,
-    getDetallesByCategoryNameAndMunicipioCodeController,
-    getDetallesByMunicipioCodeAndDateController,
-    getMunicpioInfo,
+  getApiKey,
+  updateMunicipioInfo,
+  getDetallesByMunicipioCodeController,
+  getDetallesByMunicipioCodeAndDateController,
+  getDetallesByCategoryNameAndMunicipioCodeController,
+  getMunicpioInfo
 }

@@ -62,15 +62,15 @@ async function getMunicipioByCodigoService (codigo: string) {
 
 
   async function obtenerDetalleExistente(data: any) {
-   
-    return  db.detalles_prediccion.findFirst({
+    return db.detalles_prediccion.findFirst({
       where: {
-        municipio_id: data.municipio_id,
+        metereologia: {
+          id_municipio: data.municipio_id,
+        },
         fecha: data.fecha,
-        nombre: data.nombre
+        nombre: data.nombre,
       },
     });
-  
   }
   
   async function actualizarDetalle(detalle: any) {
@@ -81,29 +81,54 @@ async function getMunicipioByCodigoService (codigo: string) {
   async function getDetallesByMunicipioCode(municipioCode: string) {
     return db.detalles_prediccion.findMany({
       where: {
-        municipio_id: municipioCode,
+        metereologia: {
+          id_municipio: municipioCode,
+        },
       },
     });
   }
 
   async function getDetallesByMunicipioCodeAndDate(municipioCode: string, fecha: Date) {
-    
-   
     return db.detalles_prediccion.findMany({
       where: {
-        municipio_id: municipioCode,
+        metereologia: {
+          id_municipio: municipioCode,
+        },
         fecha: fecha,
       },
     });
   }
-  
   async function getDetallesByCategoryNameAndMunicipioCode(categoryName: string, municipioCode: string) {
     return db.detalles_prediccion.findMany({
       where: {
         nombre: categoryName,
-        municipio_id: municipioCode,
+        metereologia: {
+          id_municipio: municipioCode,
+        },
       },
     });
+  }
+  async function insertarMetereologiaService(info:any){
+    try{
+        return db.metereologia.create({
+            data: info,
+        })
+    } catch(error){
+        console.error('Error al insertar el detalle:', error);
+        throw error;
+    }
+  }
+
+  async function ObtenerMetereologiaRecienteService(idMunicipio: string){
+    return db.metereologia.findMany({
+      where: {
+        id_municipio: idMunicipio
+      },
+      orderBy: {
+        fecha_guardado: 'asc',
+      },
+      take: 1
+    })
   }
   
 
@@ -118,6 +143,8 @@ async function getMunicipioByCodigoService (codigo: string) {
     actualizarDetalle,
     getDetallesByMunicipioCode,
     getDetallesByMunicipioCodeAndDate,
-    getDetallesByCategoryNameAndMunicipioCode
+    getDetallesByCategoryNameAndMunicipioCode,
+    insertarMetereologiaService,
+    ObtenerMetereologiaRecienteService
 };
   
