@@ -108,6 +108,37 @@ async function getMunicipioByCodigoService (codigo: string) {
       },
     });
   }
+  async function  getDetallesByCategoryNameAndDateMunicipioCode(categoryName: string, fecha: Date, municipioCode: string) {
+    const metereologiasMasRecientes = await db.metereologia.findMany({
+      where: {
+        id_municipio: municipioCode,
+        fecha_guardado: {
+          not: null,
+        },
+      },
+      orderBy: {
+        fecha_guardado: 'desc',
+      },
+      take: 1,
+      distinct: ['id_municipio'], // Obtener metereologías más recientes por municipio
+    });
+  
+    const idsMetereologiasMasRecientes = metereologiasMasRecientes.map(m => m.id);
+  
+    const detalles = await db.detalles_prediccion.findMany({
+      where: {
+        nombre: categoryName,
+        metereologia: {
+          id: {
+            in: idsMetereologiasMasRecientes,
+          },
+        },
+        fecha: fecha,
+      },
+    });
+  
+    return detalles;
+  }
   async function insertarMetereologiaService(info:any){
     try{
         return db.metereologia.create({
@@ -131,7 +162,14 @@ async function getMunicipioByCodigoService (codigo: string) {
     })
   }
   
-
+async function getMunicipiosService (){
+    try {
+      return db.municipios.findMany();
+    } catch (error) {
+      console.error('Error al obtener el municipio:', error);
+      throw error;
+    }
+  }
 
   
  export { 
@@ -145,6 +183,8 @@ async function getMunicipioByCodigoService (codigo: string) {
     getDetallesByMunicipioCodeAndDate,
     getDetallesByCategoryNameAndMunicipioCode,
     insertarMetereologiaService,
-    ObtenerMetereologiaRecienteService
+    ObtenerMetereologiaRecienteService,
+    getMunicipiosService,
+    getDetallesByCategoryNameAndDateMunicipioCode
 };
   

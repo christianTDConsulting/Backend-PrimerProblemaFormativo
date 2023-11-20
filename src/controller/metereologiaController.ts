@@ -6,12 +6,14 @@ import {
   getDetallesByMunicipioCode,
   getDetallesByMunicipioCodeAndDate,
   getDetallesByCategoryNameAndMunicipioCode ,
+  getDetallesByCategoryNameAndDateMunicipioCode,
   insertarMetereologiaService,
-  ObtenerMetereologiaRecienteService
+  ObtenerMetereologiaRecienteService,
+  getMunicipiosService
 } from '../service/metereologiaService';
 
 import axios from 'axios';
-import { metereologia, municipios } from '@prisma/client';
+import { metereologia } from '@prisma/client';
 import { differenceInDays } from 'date-fns';
 /**
  * Devuelve API_KEY para acceder al servidor AETER.
@@ -22,6 +24,21 @@ async function getApiKey(_req: Request, res: Response){
     res.status(200).json(process.env.API_KEY!); 
 }
 
+/**
+ * Obtiene todos los municipios.
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+
+async function getMunicipios (_req: Request, res: Response) {
+  try {
+    const municipios = await getMunicipiosService();
+    res.status(200).json(municipios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching municipios' });
+  }
+}
 /**
  * Obtiene un municipio por su código.
  * @param {Request} req -  Objeto Request de Express.
@@ -93,6 +110,44 @@ async function getDetallesByMunicipioCodeAndDateController(req: Request, res: Re
     res.status(500).json({ error: 'Error fetching details by municipio code and date' });
   }
 }
+/**
+ * Obtener los detalles por código de municipio, nombre de categoría y fecha
+ * @param {Request} req -  Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express. 
+
+ */
+async function getDetallesByCategoryNameAndMunicipioCodeAndDateController(req: Request, res: Response): Promise<void>{
+  try {
+    const categoryName = req.params.categoryName;
+    const municipioCode = req.params.code;
+
+    //string format /ddMMyyyy
+    const day = parseInt(req.params.fecha.slice(0, 2), 10);
+    console.log(day);
+    const month = parseInt(req.params.fecha.slice(2, 4), 10) -1; // month is 0-indexed
+    console.log(month);
+    const year = parseInt(req.params.fecha.slice(4,8), 10);
+    console.log(year);
+
+    const fecha = new Date(year, month, day);
+    
+    const formattedDate = fecha.toLocaleDateString();
+    console.log(formattedDate, fecha);
+    
+
+  // Validate the parsed date components
+  if (isNaN(day) || isNaN(month) || isNaN(year)) {
+    throw new Error('Invalid date components in the URL');
+  }
+      
+    const detalles = await getDetallesByCategoryNameAndDateMunicipioCode(categoryName, fecha, municipioCode);
+    res.status(200).json(detalles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching details by category name and municipio code' });
+  }
+}
+
 
 /**
  * Obtener los detalles por código de municipio y categoria
@@ -122,7 +177,8 @@ async function getDetallesByCategoryNameAndMunicipioCodeController(req: Request,
 
 async function updateMunicipioInfo (req: Request, res: Response) {
     try {
-      const codigoMunicipio = req.body;
+      const {codigoMunicipio} = req.body;
+     
       const apiKey = process.env.API_KEY!; // Reemplaza con tu API key de AEMET
       const headers = {
         'Accept': 'application/json',
@@ -459,5 +515,7 @@ export {
   getDetallesByMunicipioCodeController,
   getDetallesByMunicipioCodeAndDateController,
   getDetallesByCategoryNameAndMunicipioCodeController,
-  getMunicpioInfo
+  getDetallesByCategoryNameAndMunicipioCodeAndDateController,
+  getMunicpioInfo,
+  getMunicipios
 }
