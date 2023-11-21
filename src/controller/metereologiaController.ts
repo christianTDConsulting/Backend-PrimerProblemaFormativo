@@ -242,8 +242,8 @@ async function insertarDetalles(datosResponse: any) {
       const fechaActual = new Date();
 
       const metereologiaMasNueva =  await ObtenerMetereologiaRecienteService(municipioExistente.id);
-      if (metereologiaMasNueva){ //existe meterelogia, no se debe de crear
-
+      if (metereologiaMasNueva && metereologiaMasNueva.length > 0 ){ //existe meterelogia, no se debe de crear
+    
         const fechaGuardado = metereologiaMasNueva[0].fecha_guardado!;
         const diferenciaDias = differenceInDays(fechaActual, fechaGuardado);
 
@@ -333,13 +333,14 @@ async function getIndexedData(datosResponse: any, metereologiaInsertada: metereo
     //INSERTAR PRECIPITACIONES
     for ( const precipitacion of predicciones.probPrecipitacion) {
     
-    
       const probPrecipitacion = {
         ... comun ,
         nombre:"probPrecipitacion",
         valor: precipitacion.value.toString(),
-        periodo: predicciones.periodo,
+        periodo: precipitacion.periodo,
       }
+     
+      console.log(precipitacion.periodo);
       detallesArray.push(probPrecipitacion);
     }
       // Insertar cotaNieveProv
