@@ -174,49 +174,50 @@ async function getDetallesByCategoryNameAndMunicipioCodeController(req: Request,
  * @param req - Objeto Request de Express.
  * @param res - Objeto Response de Express.
  */
+async function updateMunicipioInfo(req: Request, res: Response) {
+  const { codigoMunicipio } = req.body;
+  const result = await fetchMunicipioData(codigoMunicipio);
 
-async function updateMunicipioInfo (req: Request, res: Response) {
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(500).json({ error: result.error });
+  }
+}
+
+/**
+ * Fetches municipio data from an API.
+ *
+ * @param {string} codigoMunicipio - The code of the municipio.
+ * @return {Promise<object>} - Object with success status and message/error.
+ */
+  async function fetchMunicipioData(codigoMunicipio: string) {
     try {
-      const {codigoMunicipio} = req.body;
-     
-      const apiKey = process.env.API_KEY!; // Reemplaza con tu API key de AEMET
+      const apiKey = process.env.API_KEY!;
       const headers = {
         'Accept': 'application/json',
         'api_key': apiKey
       };
-      
-     
+  
       const apiUrl = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${codigoMunicipio}`;
       const response = await axios.get(apiUrl, { headers });
-      
-     
-     
+  
       if (response.data && response.data.datos) {
-        console.log(response.data);
-        
         const datosUrl = response.data.datos;
-    
         const datosResponse = await axios.get(datosUrl);
-        console.log(datosResponse.data);
-        
-        
+  
         if (datosResponse.data) {
-
-          console.log(datosResponse.data);
           await insertarDetalles(datosResponse.data[0]);
-          return res.status(200).json({ message: 'Información actualizada correctamente' });
-
+          return { success: true, message: 'Información actualizada correctamente' };
         } else {
-          return res.status(500).json({ error: 'Error al obtener la información del municipio' });
+          return { success: false, error: 'Error al obtener la información del municipio' };
         }
-        
       }
-      return res.status(500).json({ error: 'Error al obtener el enlace de datos' });
-    }
-
-    catch (error) {
+  
+      return { success: false, error: 'Error al obtener el enlace de datos' };
+    } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Error al obtener la información del municipio' });
+      return { success: false, error: 'Error al obtener la información del municipio' };
     }
   }
 
@@ -330,7 +331,7 @@ async function getIndexedData(datosResponse: any, metereologiaInsertada: metereo
       fecha: new Date(predicciones.fecha),
     }
 
-    //INSERTAR PRECIPITACIONES
+    //Insertar precipitaciones
     for ( const precipitacion of predicciones.probPrecipitacion) {
     
       const probPrecipitacion = {
@@ -418,16 +419,6 @@ async function getIndexedData(datosResponse: any, metereologiaInsertada: metereo
     detallesArray.push(temperaturaMinimaData);
 
 
-     // Insertar sensTermica (Máxima)
-     const sensTermicaMaximaData = {
-      ...comun,
-      nombre: "sensTermica_maxima",
-      valor: predicciones.sensTermica.maxima.toString(),
-   
-    };
-
-    detallesArray.push(sensTermicaMaximaData);
-
     // Insertar Temperatura
     for (const temperatura of predicciones.temperatura.dato) {
       const temperaturaHora = {
@@ -440,6 +431,15 @@ async function getIndexedData(datosResponse: any, metereologiaInsertada: metereo
     }
 
 
+  // Insertar sensTermica (Máxima)
+  const sensTermicaMaximaData = {
+    ...comun,
+    nombre: "sensTermica_maxima",
+    valor: predicciones.sensTermica.maxima.toString(),
+ 
+  };
+
+  detallesArray.push(sensTermicaMaximaData);
 
    
     // Insertar sensTermica (Mínima)
@@ -456,7 +456,7 @@ async function getIndexedData(datosResponse: any, metereologiaInsertada: metereo
     for (const termica of predicciones.sensTermica.dato) {
       const termicaHora = {
         ...comun,
-        nombre: "temperatura",
+        nombre: "sensacion_termica",
         valor: termica.value.toString(),
         hora: termica.hora,
       };
@@ -518,5 +518,6 @@ export {
   getDetallesByCategoryNameAndMunicipioCodeController,
   getDetallesByCategoryNameAndMunicipioCodeAndDateController,
   getMunicpioInfo,
-  getMunicipios
+  getMunicipios,
+  fetchMunicipioData
 }

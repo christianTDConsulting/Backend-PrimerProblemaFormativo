@@ -7,6 +7,9 @@ import usuarioRouter from './routes/usuarioRouter';
 import logsRouter from './routes/logsRouter';
 import MetereoRouter from './routes/metereologiaRouter'
 import cors from 'cors';
+import { tareaCrone } from './config/daily';
+
+tareaCrone();
 
 const app = express();
 const port = process.env.PORT || 3000;
