@@ -1,7 +1,7 @@
 import { empresas_asociadas } from '@prisma/client';
 import {db} from '../database/database';
 
-async function insertarEmpresasArray(info:[empresas_asociadas]){
+async function insertarEmpresasArray(info:empresas_asociadas[]){
     try {
         const result = await db.$transaction(async () => {
           // Insertar detalles en la tabla detalles_prediccion
