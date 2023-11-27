@@ -1,4 +1,5 @@
 import express from 'express';
+const bodyParser = require('body-parser');
 
 import clienteRouter from './routes/clienteRoutes';
 import tlfRouter from './routes/tlfRoutes';
@@ -15,6 +16,7 @@ import { tareaCron } from './config/daily';
 tareaCron();
 
 const app = express();
+app.use(bodyParser.json({ limit: '10mb' }));
 const port = process.env.PORT || 3000;
 
 app.use(express.json());

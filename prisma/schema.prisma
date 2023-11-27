@@ -104,5 +104,7 @@ model empresas_asociadas {
   razon_social     String @db.VarChar(255)
   zona_geografica  String @db.VarChar(255)
   sector_actividad String @db.VarChar(255)
-  n__empleados     String @map("nº_empleados") @db.VarChar(255)
+  numero_empleados String @db.VarChar(255)
+
+  @@unique([razon_social, zona_geografica, sector_actividad, numero_empleados], map: "razon_social_zona_geografica_sector_actividad_nº_empleados")
 }

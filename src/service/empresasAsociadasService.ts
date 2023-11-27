@@ -7,9 +7,8 @@ async function insertarEmpresasArray(info:empresas_asociadas[]){
           // Insertar detalles en la tabla detalles_prediccion
           const detallesPrediccionResult = await db.empresas_asociadas.createMany({
             data: info,
+            skipDuplicates: true
           });
-    
-         
     
           return detallesPrediccionResult;
         });
