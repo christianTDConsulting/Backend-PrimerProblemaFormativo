@@ -6,9 +6,9 @@ import { municipios } from '@prisma/client';
 
 
 
-function tareaCrone(){
+function tareaCron(){
     cron.schedule('00 9 * * *',  () => {
-        console.log('running a task every day at 9:30 am');
+        console.log('running a task every day at 9:00 am');
         actualizarInfoDiaria();
     });
     
@@ -23,4 +23,4 @@ async function actualizarInfoDiaria(){
     }
 }
 
-export {tareaCrone} 
+export {tareaCron} 

@@ -35,7 +35,7 @@ async function insertarDetallesArray(info:any){
             data: info,
           });
     
-          // Realizar otras operaciones si es necesario
+          
     
           return detallesPrediccionResult;
         });

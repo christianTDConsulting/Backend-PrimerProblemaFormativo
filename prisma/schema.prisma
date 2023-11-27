@@ -98,3 +98,11 @@ model metereologia {
 
   @@index([id_municipio], map: "FK_metereologia_municipios")
 }
+
+model empresas_asociadas {
+  id               Int    @id @default(autoincrement())
+  razon_social     String @db.VarChar(255)
+  zona_geografica  String @db.VarChar(255)
+  sector_actividad String @db.VarChar(255)
+  n__empleados     String @map("nº_empleados") @db.VarChar(255)
+}

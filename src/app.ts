@@ -1,15 +1,18 @@
 import express from 'express';
+
 import clienteRouter from './routes/clienteRoutes';
 import tlfRouter from './routes/tlfRoutes';
 import consumoRouter from './routes/consumoRoutes';
 import authRouter from './routes/AuthRouter';
 import usuarioRouter from './routes/usuarioRouter';
 import logsRouter from './routes/logsRouter';
-import MetereoRouter from './routes/metereologiaRouter'
-import cors from 'cors';
-import { tareaCrone } from './config/daily';
+import metereoRouter from './routes/metereologiaRouter'
+import empresaRouter from './routes/empresasAsociadasRouter';
 
-tareaCrone();
+import cors from 'cors';
+import { tareaCron } from './config/daily';
+
+tareaCron();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,7 +25,8 @@ app.use('/', consumoRouter);
 app.use('/', authRouter);
 app.use('/', usuarioRouter);
 app.use('/', logsRouter);
-app.use('/', MetereoRouter )
+app.use('/', metereoRouter );
+app.use('/', empresaRouter);
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);
