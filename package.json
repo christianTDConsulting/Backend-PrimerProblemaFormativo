@@ -27,7 +27,8 @@
     "mariadb": "^3.2.1",
     "mysql2": "^3.6.1",
     "node-cron": "^3.0.3",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.7",
+    "openai": "^4.20.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.5",

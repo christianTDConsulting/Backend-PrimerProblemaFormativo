@@ -108,3 +108,13 @@ model empresas_asociadas {
 
   @@unique([razon_social, zona_geografica, sector_actividad, numero_empleados], map: "razon_social_zona_geografica_sector_actividad_nº_empleados")
 }
+
+model articulos {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @default("") @db.VarChar(255)
+  precio      Float   @default(0)
+  detalles    String  @default("") @db.VarChar(255)
+  dimensiones String  @default("") @db.VarChar(255)
+  descripcion String  @default("") @db.VarChar(255)
+  foto        String? @db.VarChar(255)
+}

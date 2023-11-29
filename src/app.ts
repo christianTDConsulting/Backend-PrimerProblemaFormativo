@@ -9,6 +9,7 @@ import usuarioRouter from './routes/usuarioRouter';
 import logsRouter from './routes/logsRouter';
 import metereoRouter from './routes/metereologiaRouter'
 import empresaRouter from './routes/empresasAsociadasRouter';
+import articuloRouter from './routes/articuloRouter';
 
 import cors from 'cors';
 import { tareaCron } from './config/daily';
@@ -29,6 +30,7 @@ app.use('/', usuarioRouter);
 app.use('/', logsRouter);
 app.use('/', metereoRouter );
 app.use('/', empresaRouter);
+app.use('/',articuloRouter);
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);
