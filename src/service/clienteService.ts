@@ -1,5 +1,5 @@
 import { clientes } from '@prisma/client';
-import {db} from '../database/database';
+import {db} from '../config/database';
 
 function getAllClientesService(){
     return  db.clientes.findMany();

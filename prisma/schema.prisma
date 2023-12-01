@@ -110,11 +110,29 @@ model empresas_asociadas {
 }
 
 model articulos {
-  id          Int     @id @default(autoincrement())
-  nombre      String  @default("") @db.VarChar(255)
-  precio      Float   @default(0)
-  detalles    String  @default("") @db.VarChar(255)
-  dimensiones String  @default("") @db.VarChar(255)
-  descripcion String  @default("") @db.VarChar(255)
-  foto        String? @db.VarChar(255)
+  id                        Int                         @id @default(autoincrement())
+  nombre                    String                      @default("") @db.VarChar(255)
+  precio                    Float                       @default(0)
+  dimensiones               String                      @default("") @db.VarChar(255)
+  descripcion               String                      @default("") @db.VarChar(255)
+  foto                      String?                     @db.VarChar(255)
+  stock                     Int
+  articulos_caracteristicas articulos_caracteristicas[]
+}
+
+model articulos_caracteristicas {
+  id                 Int             @id @default(autoincrement())
+  id_caracteristicas Int             @default(0)
+  id_articulos       Int?            @default(0)
+  articulos          articulos?      @relation(fields: [id_articulos], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_articulos")
+  caracteristicas    caracteristicas @relation(fields: [id_caracteristicas], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_caracteristicas")
+
+  @@index([id_articulos], map: "FK_articulos_caracteristicas_articulos")
+  @@index([id_caracteristicas], map: "FK_articulos_caracteristicas_caracteristicas")
+}
+
+model caracteristicas {
+  id                        Int                         @id @default(autoincrement())
+  nombre                    String?                     @db.VarChar(255)
+  articulos_caracteristicas articulos_caracteristicas[]
 }

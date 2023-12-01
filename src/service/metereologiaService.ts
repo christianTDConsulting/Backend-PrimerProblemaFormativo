@@ -1,4 +1,4 @@
-import {db} from '../database/database';
+import {db} from '../config/database';
 
 async function insertarMunicipio(data: { id: string; nombre: string; provincia: string }) {
     try {

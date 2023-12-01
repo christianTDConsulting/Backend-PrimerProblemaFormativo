@@ -1,6 +1,6 @@
 
 import { consumos } from '@prisma/client';
-import {db} from '../database/database';
+import {db} from '../config/database';
 
 function getAllConsumoService(){
     try{

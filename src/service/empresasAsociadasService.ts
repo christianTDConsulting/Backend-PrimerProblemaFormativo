@@ -1,5 +1,5 @@
 import { empresas_asociadas } from '@prisma/client';
-import {db} from '../database/database';
+import {db} from '../config/database';
 
 async function insertarEmpresasArray(info:empresas_asociadas[]){
     try {
