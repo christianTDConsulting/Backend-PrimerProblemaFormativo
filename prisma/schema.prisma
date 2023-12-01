@@ -7,10 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model articulos {
+  id                        Int                         @id @default(autoincrement())
+  nombre                    String                      @default("") @db.VarChar(255)
+  precio                    Float                       @default(0)
+  dimensiones               String                      @default("") @db.VarChar(255)
+  descripcion               String                      @default("") @db.VarChar(255)
+  foto                      String?                     @db.VarChar(255)
+  stock                     Int
+  articulos_caracteristicas articulos_caracteristicas[]
+}
+
+model articulos_caracteristicas {
+  id                 Int             @id @default(autoincrement())
+  id_caracteristicas Int             @default(0)
+  id_articulos       Int?            @default(0)
+  articulos          articulos?      @relation(fields: [id_articulos], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_articulos")
+  caracteristicas    caracteristicas @relation(fields: [id_caracteristicas], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_caracteristicas")
+
+  @@index([id_articulos], map: "FK_articulos_caracteristicas_articulos")
+  @@index([id_caracteristicas], map: "FK_articulos_caracteristicas_caracteristicas")
+}
+
 model bloqueos {
   id          Int       @id @default(autoincrement())
   ip_address  String?   @db.VarChar(50)
   fecha_hasta DateTime? @db.Timestamp(0)
+}
+
+model caracteristicas {
+  id                        Int                         @id @default(autoincrement())
+  nombre                    String?                     @db.VarChar(255)
+  articulos_caracteristicas articulos_caracteristicas[]
 }
 
 model clientes {
@@ -34,6 +62,16 @@ model consumos {
   @@index([id_telefono], map: "FK_gastos_telefonos")
 }
 
+model conversacion {
+  id           Int        @id @default(autoincrement())
+  id_usuario   Int        @default(0)
+  fecha_inicio DateTime   @default(now()) @db.Timestamp(0)
+  usuarios     usuarios   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_conversacion_usuarios")
+  mensajes     mensajes[]
+
+  @@index([id_usuario], map: "FK_conversacion_usuarios")
+}
+
 model detalles_prediccion {
   id              Int           @id @default(autoincrement()) @db.UnsignedInt
   id_metereologia Int?
@@ -50,12 +88,43 @@ model detalles_prediccion {
   @@index([id_metereologia], map: "FK_detalles_prediccion_metereologia")
 }
 
+model empresas_asociadas {
+  id               Int    @id @default(autoincrement())
+  razon_social     String @db.VarChar(255)
+  zona_geografica  String @db.VarChar(255)
+  sector_actividad String @db.VarChar(255)
+  numero_empleados String @db.VarChar(255)
+
+  @@unique([razon_social, zona_geografica, sector_actividad, numero_empleados], map: "razon_social_zona_geografica_sector_actividad_nº_empleados")
+}
+
 model logs {
   id         Int      @id @default(autoincrement())
   fecha      DateTime @default(now()) @db.Timestamp(0)
   email      String   @default("") @db.VarChar(60)
   exito      Boolean  @db.Bit(1)
   ip_address String   @db.VarChar(50)
+}
+
+model mensajes {
+  id              Int          @id @default(autoincrement())
+  id_conversacion Int          @default(0)
+  prompt          String       @db.Text
+  respuesta       String       @db.Text
+  timestamp       DateTime?    @default(now()) @db.Timestamp(0)
+  conversacion    conversacion @relation(fields: [id_conversacion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__conversacion")
+
+  @@index([id_conversacion], map: "FK__conversacion")
+}
+
+model metereologia {
+  id                  Int                   @id @default(autoincrement())
+  id_municipio        String?               @db.VarChar(50)
+  fecha_guardado      DateTime?             @default(now()) @db.Date
+  detalles_prediccion detalles_prediccion[]
+  municipios          municipios?           @relation(fields: [id_municipio], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_metereologia_municipios")
+
+  @@index([id_municipio], map: "FK_metereologia_municipios")
 }
 
 model municipios {
@@ -66,8 +135,9 @@ model municipios {
 }
 
 model perfiles {
-  id  Int     @id
-  rol String? @db.VarChar(50)
+  id       Int        @id
+  rol      String?    @db.VarChar(50)
+  usuarios usuarios[]
 }
 
 model telefonos {
@@ -82,57 +152,13 @@ model telefonos {
 }
 
 model usuarios {
-  id        Int       @id @default(autoincrement())
-  password  String    @db.VarChar(300)
-  email     String    @unique(map: "email") @db.VarChar(50)
-  id_perfil Int?
-  clientes  clientes?
-}
+  id           Int            @id @default(autoincrement())
+  password     String         @db.VarChar(300)
+  email        String         @unique(map: "email") @db.VarChar(50)
+  id_perfil    Int?
+  clientes     clientes?
+  conversacion conversacion[]
+  perfiles     perfiles?      @relation(fields: [id_perfil], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_usuarios_perfiles")
 
-model metereologia {
-  id                  Int                   @id @default(autoincrement())
-  id_municipio        String?               @db.VarChar(50)
-  fecha_guardado      DateTime?             @default(now()) @db.Date
-  detalles_prediccion detalles_prediccion[]
-  municipios          municipios?           @relation(fields: [id_municipio], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_metereologia_municipios")
-
-  @@index([id_municipio], map: "FK_metereologia_municipios")
-}
-
-model empresas_asociadas {
-  id               Int    @id @default(autoincrement())
-  razon_social     String @db.VarChar(255)
-  zona_geografica  String @db.VarChar(255)
-  sector_actividad String @db.VarChar(255)
-  numero_empleados String @db.VarChar(255)
-
-  @@unique([razon_social, zona_geografica, sector_actividad, numero_empleados], map: "razon_social_zona_geografica_sector_actividad_nº_empleados")
-}
-
-model articulos {
-  id                        Int                         @id @default(autoincrement())
-  nombre                    String                      @default("") @db.VarChar(255)
-  precio                    Float                       @default(0)
-  dimensiones               String                      @default("") @db.VarChar(255)
-  descripcion               String                      @default("") @db.VarChar(255)
-  foto                      String?                     @db.VarChar(255)
-  stock                     Int
-  articulos_caracteristicas articulos_caracteristicas[]
-}
-
-model articulos_caracteristicas {
-  id                 Int             @id @default(autoincrement())
-  id_caracteristicas Int             @default(0)
-  id_articulos       Int?            @default(0)
-  articulos          articulos?      @relation(fields: [id_articulos], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_articulos")
-  caracteristicas    caracteristicas @relation(fields: [id_caracteristicas], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_articulos_caracteristicas_caracteristicas")
-
-  @@index([id_articulos], map: "FK_articulos_caracteristicas_articulos")
-  @@index([id_caracteristicas], map: "FK_articulos_caracteristicas_caracteristicas")
-}
-
-model caracteristicas {
-  id                        Int                         @id @default(autoincrement())
-  nombre                    String?                     @db.VarChar(255)
-  articulos_caracteristicas articulos_caracteristicas[]
+  @@index([id_perfil], map: "FK_usuarios_perfiles")
 }
