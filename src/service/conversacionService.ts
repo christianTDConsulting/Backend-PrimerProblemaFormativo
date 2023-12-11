@@ -4,33 +4,50 @@ import {db} from '../config/database';
 
 
 
-async function crearConversacionService(id_usuario:number):Promise<conversacion> {
+async function crearConversacionService(id_usuario:number, asistente:string, id:string):Promise<conversacion> {
     try {
-        if (!id_usuario) {
-            // Si id_usuario no está definido, pasamos un objeto vacío como argumento
-            return await db.conversacion.create(
-                {
-                    data: {
-
-                    },
-                }
-            );
-        }
-
-        // Si id_usuario está definido, pasamos los datos de conversacion
-        return await db.conversacion.create({
-            data:{
-                id_usuario:id_usuario
+       
+        
+        return await db.conversacion.create(
+            {
+                data: {
+                    id: id,
+                    id_usuario: id_usuario,
+                    asistente: asistente,
+                },
             }
-           
-        });
+        );
+
+
+       
     } catch (error) {
         console.error("Error al crear la conversación:", error);
         throw error; // Puedes relanzar el error para que se maneje en un nivel superior si es necesario
     }
 }
 
-async function getMessageByConversacionId(id_conversacion: number) {
+async function crearConversacionAnonimaService(asistente:string, id:string):Promise<conversacion> {
+    try {
+       
+        
+        return await db.conversacion.create(
+            {
+                data: {
+                    id: id,
+                    asistente: asistente,
+                },
+            }
+        );
+
+
+       
+    } catch (error) {
+        console.error("Error al crear la conversación:", error);
+        throw error; // Puedes relanzar el error para que se maneje en un nivel superior si es necesario
+    }
+}
+
+async function getMessageByConversacionId(id_conversacion: string) {
     try{
         return db.mensajes.findMany({
             where: {
@@ -46,7 +63,7 @@ async function getMessageByConversacionId(id_conversacion: number) {
     }
 }
 
-async function crearMensajeService(mensaje: {id_conversacion: number, prompt: string, respuesta: string})  {
+async function crearMensajeService(mensaje: {id_conversacion: string, prompt: string, respuesta: string})  {
     try{
        await db.mensajes.create({
             data: {
@@ -60,4 +77,5 @@ async function crearMensajeService(mensaje: {id_conversacion: number, prompt: st
     }
 }
 
-export { crearConversacionService, crearMensajeService, getMessageByConversacionId }
+
+export { crearConversacionService, crearMensajeService, getMessageByConversacionId, crearConversacionAnonimaService }

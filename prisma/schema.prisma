@@ -63,9 +63,10 @@ model consumos {
 }
 
 model conversacion {
-  id           Int        @id @default(autoincrement())
+  id           String     @id @default("AUTO_INCREMENT") @db.VarChar(50)
   id_usuario   Int        @default(0)
   fecha_inicio DateTime   @default(now()) @db.Timestamp(0)
+  asistente    String     @db.VarChar(50)
   usuarios     usuarios   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_conversacion_usuarios")
   mensajes     mensajes[]
 
@@ -108,13 +109,13 @@ model logs {
 
 model mensajes {
   id              Int          @id @default(autoincrement())
-  id_conversacion Int          @default(0)
+  id_conversacion String       @default("0") @db.VarChar(50)
   prompt          String       @db.Text
   respuesta       String       @db.Text
-  timestamp       DateTime?    @default(now()) @db.Timestamp(0)
+  timestamp       DateTime?    @default(now()) @db.DateTime(0)
   conversacion    conversacion @relation(fields: [id_conversacion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__conversacion")
 
-  @@index([id_conversacion], map: "FK__conversacion")
+  @@index([id_conversacion], map: "FK_mensajes_conversacion")
 }
 
 model metereologia {

@@ -1,0 +1,235 @@
+{
+    "articulos": [
+      {
+        "id": 1,
+        "nombre": "Smartphone XYZ",
+        "precio": 499.99,
+        "dimensiones": "150x75x8 mm",
+        "descripcion": "Smartphone de última generación con cámara de alta calidad",
+        "foto": "https://www.mylar.es/37903-large_default/SMARTPHONE-APPLE-IPHONE-14-PRO-256GB-BLUE-MPWP3QL-A.jpg",
+        "stock": 15,
+        "caracteristicas": [
+          {
+            "id": 1,
+            "nombre": "Batería"
+          },
+          {
+            "id": 2,
+            "nombre": "Carga rápida"
+          },
+          {
+            "id": 3,
+            "nombre": "Eficiente"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "nombre": "Tableta ABC",
+        "precio": 299.99,
+        "dimensiones": "245x150x8 mm",
+        "descripcion": "Tableta ligera y rápida, ideal para viajes",
+        "foto": "https://p2-ofp.static.pub/fes/cms/2023/02/22/pkhjbh23c7sjfxf76k6e6usevy3ixi851221.png",
+        "stock": 23,
+        "caracteristicas": [
+          {
+            "id": 4,
+            "nombre": "Fabricado con materiales reciclados"
+          },
+          {
+            "id": 5,
+            "nombre": "Pantalla táctil"
+          },
+          {
+            "id": 6,
+            "nombre": "Conectividad Bluetooth"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "nombre": "Laptop Pro",
+        "precio": 899.99,
+        "dimensiones": "330x220x20 mm",
+        "descripcion": "Laptop de alto rendimiento para profesionales",
+        "foto": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RWBrzy?ver=85d4&q=90&m=6&h=705&w=1253&b=%23FFFFFFFF&f=jpg&o=f&p=140&aim=true",
+        "stock": 25,
+        "caracteristicas": [
+          {
+            "id": 1,
+            "nombre": "Batería"
+          },
+          {
+            "id": 8,
+            "nombre": "Cámara de alta resolución"
+          },
+          {
+            "id": 9,
+            "nombre": "Control por voz"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "nombre": "Auriculares Bluetooth",
+        "precio": 199.99,
+        "dimensiones": "200x150x50 mm",
+        "descripcion": "Auriculares inalámbricos con cancelación de ruido",
+        "foto": "https://cdn.grupoelcorteingles.es/SGFM/dctm/MEDIA03/202302/21/00138545735748____13__640x640.jpg",
+        "stock": 91,
+        "caracteristicas": [
+          {
+            "id": 2,
+            "nombre": "Carga rápida"
+          },
+          {
+            "id": 10,
+            "nombre": "Compatible con Wi-Fi"
+          },
+          {
+            "id": 11,
+            "nombre": "Memoria expandible"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "nombre": "Reloj Inteligente Gama Alta",
+        "precio": 249.99,
+        "dimensiones": "46x36x12 mm",
+        "descripcion": "Reloj inteligente con múltiples funciones de salud y fitness",
+        "foto": "https://www.red-ness.es/images/art/t5/3/6746-002-P.jpg",
+        "stock": 23,
+        "caracteristicas": [
+          {
+            "id": 3,
+            "nombre": "Eficiente"
+          },
+          {
+            "id": 13,
+            "nombre": "Reducción de ruido"
+          },
+          {
+            "id": 14,
+            "nombre": "Asistente virtual integrado"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "nombre": "Consola de Juegos 4K",
+        "precio": 499.99,
+        "dimensiones": "300x200x60 mm",
+        "descripcion": "Consola de juegos con gráficos en 4K y amplia biblioteca de juegos",
+        "foto": "https://m.media-amazon.com/images/I/61aQd3tCd4L._AC_UF894,1000_QL80_.jpg",
+        "stock": 3242,
+        "caracteristicas": [
+          {
+            "id": 4,
+            "nombre": "Fabricado con materiales reciclados"
+          },
+          {
+            "id": 15,
+            "nombre": "Compatibilidad con 5G"
+          },
+          {
+            "id": 16,
+            "nombre": "Carga inalámbrica"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "nombre": "Cámara Digital Pro",
+        "precio": 599.99,
+        "dimensiones": "120x80x100 mm",
+        "descripcion": "Cámara digital profesional con lentes intercambiables",
+        "foto": "https://www.sony.es/image/b2e494fbba7667cdbe3dbd60e7f7ff50?fmt=jpeg&wid=1160&qlt=43",
+        "stock": 2347,
+        "caracteristicas": [
+          {
+            "id": 5,
+            "nombre": "Pantalla táctil"
+          },
+          {
+            "id": 17,
+            "nombre": "Modo nocturno en cámara"
+          },
+          {
+            "id": 18,
+            "nombre": "Reconocimiento facial"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "nombre": "Drone con Cámara HD",
+        "precio": 349.99,
+        "dimensiones": "250x250x120 mm",
+        "descripcion": "Drone con capacidad de vuelo estable y cámara HD integrada",
+        "foto": "https://www.mytrendyphone.es/images/E68-Mini-Foldable-Drone-with-HD-Camera-Remote-Control-720p-800mAh-07052021-01-p.webp",
+        "stock": 213,
+        "caracteristicas": [
+          {
+            "id": 6,
+            "nombre": "Conectividad Bluetooth"
+          },
+          {
+            "id": 19,
+            "nombre": "GPS integrado"
+          },
+          {
+            "id": 20,
+            "nombre": "Pantalla de alta definición"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "nombre": "Altavoz Inteligente",
+        "precio": 129.99,
+        "dimensiones": "100x100x200 mm",
+        "descripcion": "Altavoz inteligente con asistente de voz integrado",
+        "foto": "https://m.media-amazon.com/images/I/711u7Zsac8L._AC_UF894,1000_QL80_.jpg",
+        "stock": 123,
+        "caracteristicas": [
+          {
+            "id": 1,
+            "nombre": "Batería"
+          },
+          {
+            "id": 7,
+            "nombre": "Resistente al agua"
+          },
+          {
+            "id": 14,
+            "nombre": "Asistente virtual integrado"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "nombre": "Monitor 4K UHD",
+        "precio": 399.99,
+        "dimensiones": "600x350x50 mm",
+        "descripcion": "Monitor de alta resolución 4K, ideal para diseño gráfico y juegos",
+        "foto": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/g-series/g2722hs/pdp/monitor-dell-gaming-g2722hs-pdp-hero.psd?fmt=jpg&wid=5000&hei=3470",
+        "stock": 3218,
+        "caracteristicas": [
+          {
+            "id": 3,
+            "nombre": "Eficiente"
+          },
+          {
+            "id": 21,
+            "nombre": "Sonido envolvente"
+          },
+          {
+            "id": 30,
+            "nombre": "Control remoto inteligente"
+          }
+        ]
+      }
+    ]
+  }
+  

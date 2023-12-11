@@ -1,9 +1,10 @@
 import express, { Router } from 'express';
-import { askGepeto,  createConversacion } from '../controller/openAIController';
+import { askGepeto,  createGepetoConversacion, getMensajessByConversacionId } from '../controller/openAIController';
 
 const openAIRouter: Router = express.Router();
 
-openAIRouter.post('/openai', askGepeto); 
-openAIRouter.post('/conversacion', createConversacion);  
+openAIRouter.post('/openai', askGepeto);
+openAIRouter.get('/mensajes/:id', getMensajessByConversacionId);
+openAIRouter.post('/conversacion', createGepetoConversacion);  
 
 export default openAIRouter;
