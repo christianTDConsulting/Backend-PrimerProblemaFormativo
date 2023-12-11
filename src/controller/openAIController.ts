@@ -34,24 +34,11 @@ async function askGepeto(req: Request, res:Response) {
             return res.status(400).json({ error: 'No response from Gepeto' });
         }
 
-        let respuesta: string = '';
+        let respuesta: string =   messages.data[0].content[0].type== 'text' ? messages.data[0].content[0].text.value : "imagen";
        
-        for (const message of messages.data) {
-            console.log(message);
-           if (message.role === 'assistant') {
-            for (const contents of message.content) {
-                if (contents.type === 'text') {
-                    respuesta = respuesta.concat( contents.text.value);
-                }
-            }
-           }
-            
-        }
+   
         
-       /* if (respuesta === '') {
-            return res.status(400).json({ error: 'Respuesta está vacía' });
-        } */
-        
+      
         
        
 
