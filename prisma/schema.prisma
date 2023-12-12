@@ -63,14 +63,16 @@ model consumos {
 }
 
 model conversacion {
-  id           String     @id @default("AUTO_INCREMENT") @db.VarChar(50)
-  id_usuario   Int        @default(0)
-  fecha_inicio DateTime   @default(now()) @db.Timestamp(0)
-  asistente    String     @db.VarChar(50)
-  usuarios     usuarios   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_conversacion_usuarios")
-  mensajes     mensajes[]
+  id                                          String     @id @default("AUTO_INCREMENT") @db.VarChar(50)
+  id_usuario                                  Int        @default(0)
+  fecha_inicio                                DateTime   @default(now()) @db.Timestamp(0)
+  asistente                                   String     @db.VarChar(50)
+  asistente_conversacion_asistenteToasistente asistente  @relation("conversacion_asistenteToasistente", fields: [asistente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_conversacion_asistente")
+  usuarios                                    usuarios   @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_conversacion_usuarios")
+  mensajes                                    mensajes[]
 
   @@index([id_usuario], map: "FK_conversacion_usuarios")
+  @@index([asistente], map: "FK_conversacion_asistente")
 }
 
 model detalles_prediccion {
@@ -162,4 +164,10 @@ model usuarios {
   perfiles     perfiles?      @relation(fields: [id_perfil], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_usuarios_perfiles")
 
   @@index([id_perfil], map: "FK_usuarios_perfiles")
+}
+
+model asistente {
+  id                                             String         @id @db.VarChar(50)
+  nombre                                         String         @unique(map: "nombre") @db.VarChar(50)
+  conversacion_conversacion_asistenteToasistente conversacion[] @relation("conversacion_asistenteToasistente")
 }

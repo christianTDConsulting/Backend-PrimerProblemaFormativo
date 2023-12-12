@@ -1,9 +1,10 @@
 
 
-import {openai, generateAssistant} from "../config/openAi";
+import {openai, generateGepetoAssistant} from "../config/openAi";
 import { Request, Response } from "express";
 import { crearConversacionService,crearConversacionAnonimaService, crearMensajeService, getMessageByConversacionId } from "../service/conversacionService";
 import { mensajes } from "@prisma/client";
+import { getAsistenteByNombre } from "../service/asistenteService";
 
 
 /**
@@ -36,11 +37,6 @@ async function askGepeto(req: Request, res:Response) {
 
         let respuesta: string =   messages.data[0].content[0].type== 'text' ? messages.data[0].content[0].text.value : "imagen";
        
-   
-        
-      
-        
-       
 
         const mensaje = {
             id_conversacion: id_conversacion,
@@ -59,7 +55,6 @@ async function askGepeto(req: Request, res:Response) {
 }
 async function getOpenAiResponse( thread_id: string, prompt: string) {
    
-
     const message =  await openai.beta.threads.messages.create(
         thread_id,
         {
@@ -71,7 +66,11 @@ async function getOpenAiResponse( thread_id: string, prompt: string) {
 
     console.log (message);
 
-    const gepeto = await generateAssistant();
+    var gepeto = await getAsistenteByNombre("Gepeto");
+    if (!gepeto) {
+        gepeto = await generateGepetoAssistant();
+    }
+   
 
     const run = await openai.beta.threads.runs.create(
         thread_id,
@@ -109,7 +108,7 @@ async function createMensaje(mensaje:{
         
     }catch(error){
         console.log(error);
-        throw error;
+        throw error; 
     }
 
 }
@@ -126,12 +125,18 @@ async function createGepetoConversacion(req:Request, res:Response) {
     try {
         const { id_user } = req.body;
         const thread = await openai.beta.threads.create();
+        
+        var gepeto = await getAsistenteByNombre("Gepeto");
+        if (!gepeto) {
+            gepeto = await  generateGepetoAssistant();
+        }
+
         if (!id_user) {
             
-            const conversation = await crearConversacionAnonimaService('gepeto', thread.id);
+            const conversation = await crearConversacionAnonimaService(gepeto.id, thread.id);
             return res.status(200).json(conversation);
         }
-        const conversation = await crearConversacionService(id_user, 'gepeto', thread.id);
+        const conversation = await crearConversacionService(id_user, gepeto.id, thread.id);
         return res.status(200).json(conversation);
     } catch (error) {
         console.error(error);
