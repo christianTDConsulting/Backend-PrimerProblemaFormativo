@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { crearConversacionService,crearConversacionAnonimaService, crearMensajeService, getMessageByConversacionId } from "../service/conversacionService";
 import { mensajes } from "@prisma/client";
 import { getAsistenteByNombre } from "../service/asistenteService";
-
+import emojiRegex from 'emoji-regex';
 
 /**
  * Asks Gepeto a question and returns a response.
@@ -103,14 +103,27 @@ async function createMensaje(mensaje:{
     prompt: string,
     respuesta: string
 })  {
-    try{
-        return await crearMensajeService(mensaje);
-        
-    }catch(error){
-        console.log(error);
+    try {
+        // Convert emojis to a hexadecimal representation
+        const convertedMensaje = {
+            ...mensaje,
+            prompt: convertEmojisToHex(mensaje.prompt),
+            respuesta: convertEmojisToHex(mensaje.respuesta)
+        };
+
+        return await crearMensajeService(convertedMensaje);
+    } catch (error) {
+        console.error(error);
         throw error; 
     }
 
+}
+
+function convertEmojisToHex(text: string): string {
+    const regex = emojiRegex();
+    return text.replace(regex, (emoji) => {
+        return `\\u{${emoji.codePointAt(0)?.toString(16)}}`;
+    });
 }
 
 
@@ -125,7 +138,7 @@ async function createGepetoConversacion(req:Request, res:Response) {
     try {
         const { id_user } = req.body;
         const thread = await openai.beta.threads.create();
-        
+
         var gepeto = await getAsistenteByNombre("Gepeto");
         if (!gepeto) {
             gepeto = await  generateGepetoAssistant();
