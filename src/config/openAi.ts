@@ -22,7 +22,7 @@ Daré el precio del catálogo en euros.
 const openai = new OpenAI({ apiKey: process.env.API_KEY_GPT});
 async function generateGepetoAssistant(){
     const file = await openai.files.create({
-        file: fs.createReadStream('./src/assets/catalogo.json', 'utf-8'),
+        file: fs.createReadStream('./assets/catalogo.json', 'utf-8'),
         purpose:"assistants",
     });
     const assistant = await openai.beta.assistants.create({

@@ -132,7 +132,7 @@ function convertEmojisToHex(text: string): string {
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
- * @return {Promise<void>} The created conversation.
+ * @return {Promise<void>} The created conversation.+
  */
 async function createGepetoConversacion(req:Request, res:Response) {
     try {
