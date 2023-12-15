@@ -87,6 +87,14 @@ async function getOpenAiResponse( thread_id: string, prompt: string) {
         }
         
     }
+
+    if (run.status === 'failed' )  {
+        throw new Error("Error");
+    }
+
+    if (run.status === 'expired')  {
+        throw new Error('Thread expired');
+    }
   
     console.log (run);
 
