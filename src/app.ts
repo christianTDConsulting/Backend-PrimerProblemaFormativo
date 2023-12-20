@@ -11,11 +11,16 @@ import metereoRouter from './routes/metereologiaRouter'
 import empresaRouter from './routes/empresasAsociadasRouter';
 import articuloRouter from './routes/articuloRouter';
 import openAIRouter from './routes/openAIRouter';
+import imageCheckerRouter from './routes/ImageCheckerRouter';
 
-import cors from 'cors';
 import { tareaCron } from './config/daily';
 
+import cors from 'cors';
+import path from 'path';
+
 tareaCron();
+
+console.log(path.join(__dirname, '..', 'assets', 'images', 'politica'));
 
 const app = express();
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -33,6 +38,7 @@ app.use('/', metereoRouter );
 app.use('/', empresaRouter);
 app.use('/',articuloRouter);
 app.use('/',openAIRouter);
+app.use('/', imageCheckerRouter);
 
 app.listen(port, () => {
   console.log(`Servidor en ejecución en http://localhost:${port}`);

@@ -7,6 +7,8 @@ import { mensajes } from "@prisma/client";
 import { getAsistenteByNombre } from "../service/asistenteService";
 import emojiRegex from 'emoji-regex';
 
+
+
 /**
  * Asks Gepeto a question and returns a response.
  *
@@ -14,10 +16,6 @@ import emojiRegex from 'emoji-regex';
  * @param {Response} res - the response object
  * @return {Promise<void>} - a promise that resolves to void
  */
-
-
-
-
 async function askGepeto(req: Request, res:Response) {
     try {
        
