@@ -1,15 +1,24 @@
-import * as fs from 'fs';
-import * as path from 'path';
+
 import {db} from '../config/database'
+import { imagenes_carteles } from '@prisma/client';
 
 
-async function saveImageService(filename: string, user_id: number) {
+/**
+ * Saves the image cartel service.
+ *
+ * @param {string} filename1 - The first filename.
+ * @param {string} filaname2 - The second filename.
+ * @param {string} similitud - The similitud value.
+ * @return {Promise<any>} The created image cartel.
+ */
+async function saveImageCartelService(filename1: string, filaname2: string, similitud:string) {
   try{
-  return await db.imagenes.create(
+  return await db.imagenes_carteles.create(
     {
       data: {       
-        id_usuario: user_id,
-        nombre: filename,
+        modelo: filename1,
+        imagen: filaname2,
+        resultado: similitud
       },
     }
   );
@@ -20,35 +29,44 @@ async function saveImageService(filename: string, user_id: number) {
 }
 
 
- async function getImagesService(): Promise<string[]> {
-  const imageFolderPath =  path.join(__dirname, '..', 'assets', 'images', 'politica');
-
-  // Lee los nombres de los archivos en la carpeta
-  const files = fs.readdirSync(imageFolderPath);
-  
-  return files;
-}
-
-async function getImagesByUserId(user_id: number) {
-
+/**
+ * Retrieves images service.
+ *
+ * @return {Promise<{ imagen: imagenes_carteles, modelFile: string, imageFile: string }[]>} A promise that resolves to an array of objects containing image data and file paths.
+ */
+async function getImagesService(): Promise<{ imagen: imagenes_carteles, file1: string, file2: string }[]> {
   try {
-    const images = await db.imagenes.findMany({ where: { id_usuario: user_id } });
+    const images = await db.imagenes_carteles.findMany();
 
-    const imageFolderPath =  path.join(__dirname, '..', 'assets', 'images', 'politica');
+    const port = process.env.PORT || 3000;
+    const backendName = process.env.BACKEND_NAME || 'localhost';
+
+    const imageFolderPath = `${backendName}:${port}/image`;
+
+
    
-    // Filtra los archivos para incluir solo aquellos cuyos nombres coinciden con los nombres de las imágenes
-    const files = fs.readdirSync(imageFolderPath).filter(file => images.some(image => image.nombre === file));
+    const imagesWithFiles = images.map((image) => {
+      const file1 = `${imageFolderPath}/${image.modelo}`;
+      const file2 = `${imageFolderPath}/${image.imagen}`;
 
-    return files;
+      return {
+        imagen: image,
+        file1,
+        file2,
+      };
+    });
+    
+    return imagesWithFiles;
   } catch (error) {
-    console.error('Error al obtener las imágenes:', error);
     throw error;
-  } 
+  }
   
 }
+
+
 
   export {
-    saveImageService,
+    saveImageCartelService,
     getImagesService,
-    getImagesByUserId
+
   }

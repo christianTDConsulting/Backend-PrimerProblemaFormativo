@@ -161,7 +161,6 @@ model usuarios {
   id_perfil    Int?
   clientes     clientes?
   conversacion conversacion[]
-  imagenes     imagenes[]
   perfiles     perfiles?      @relation(fields: [id_perfil], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_usuarios_perfiles")
 
   @@index([id_perfil], map: "FK_usuarios_perfiles")
@@ -173,12 +172,10 @@ model asistente {
   conversacion_conversacion_asistenteToasistente conversacion[] @relation("conversacion_asistenteToasistente")
 }
 
-model imagenes {
-  id         Int      @id @default(autoincrement())
-  nombre     String   @unique(map: "nombre") @default("") @db.VarChar(50)
-  id_usuario Int      @default(0)
-  timestamp  DateTime @default(now()) @db.Timestamp(0)
-  usuarios   usuarios @relation(fields: [id_usuario], references: [id], onDelete: Cascade, map: "FK__usuarios")
-
-  @@index([id_usuario], map: "FK__usuarios")
+model imagenes_carteles {
+  id        Int      @id @default(autoincrement())
+  modelo    String   @default("") @db.VarChar(50)
+  imagen    String   @unique(map: "Imagen2") @db.VarChar(50)
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+  resultado String?  @db.VarChar(50)
 }

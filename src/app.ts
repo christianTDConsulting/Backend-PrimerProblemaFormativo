@@ -16,16 +16,17 @@ import imageCheckerRouter from './routes/ImageCheckerRouter';
 import { tareaCron } from './config/daily';
 
 import cors from 'cors';
-import path from 'path';
+
 
 tareaCron();
 
-console.log(path.join(__dirname, '..', 'assets', 'images', 'politica'));
+
 
 const app = express();
 app.use(bodyParser.json({ limit: '10mb' }));
-const port = process.env.PORT || 3000;
 
+const port = process.env.PORT || 3000;
+const backendName = process.env.BACKEND_NAME || 'localhost';
 app.use(express.json());
 app.use(cors());
 app.use('/', clienteRouter);
@@ -40,6 +41,7 @@ app.use('/',articuloRouter);
 app.use('/',openAIRouter);
 app.use('/', imageCheckerRouter);
 
+
 app.listen(port, () => {
-  console.log(`Servidor en ejecución en http://localhost:${port}`);
+  console.log(`Servidor en ejecución en http://${backendName}:${port}`);
 });
