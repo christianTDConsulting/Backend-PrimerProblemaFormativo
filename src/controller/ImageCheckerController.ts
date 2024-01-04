@@ -131,8 +131,8 @@ export async function postImageMovil(req: Request, res: Response){
     throw new Error('Internal server error');
   }
 
-  //const openAIObject = JSON.parse(openAiResult);
-  const images = saveImageMovilService();
+  const openAIObject = JSON.parse(openAiResult);
+  const images = saveImageMovilService(openAIObject.status, openAIObject.moviles);
  
   return res.status(200).json(images);
 

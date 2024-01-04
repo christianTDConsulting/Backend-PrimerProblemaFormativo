@@ -182,7 +182,7 @@ model imagenes_carteles {
 }
 
 model imagenes_moviles {
-  id                        Int                         @id
+  id                        Int                         @id @default(autoincrement())
   timestamp                 DateTime                    @default(now()) @db.Date
   status                    String                      @db.VarChar(50)
   total                     Int
@@ -190,7 +190,7 @@ model imagenes_moviles {
 }
 
 model imagenes_moviles_contados {
-  id                  Int              @id
+  id                  Int              @id @default(autoincrement())
   id_imagenes_moviles Int
   x                   Int
   y                   Int

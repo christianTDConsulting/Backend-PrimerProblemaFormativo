@@ -1,6 +1,7 @@
 
 import {db} from '../config/database'
 import { imagenes_carteles } from '@prisma/client';
+import { Movil } from '../interfaces/ImageChecker';
 
 
 /**
@@ -60,13 +61,37 @@ async function getImagesService(): Promise<imagenes_carteles[]> {
   }
 }
 
- async function saveImageMovilService() {
-  try{
+async function saveImageMovilService(status: string, moviles_contados: Movil[]) {
+  try {
+    // Iniciar una transacción
+    await db.$transaction(async (prisma) => {
+      // Crear un registro en 'imagenes_moviles' y obtener el ID generado
+      const imageMovil = await prisma.imagenes_moviles.create({
+        data: {       
+          status: status,
+          total: moviles_contados.length,
+        },
+      });
+
+      // Preparar los datos para 'imagenes_moviles_contados'
+      const contadosData = moviles_contados.map(movil => ({
+        ...movil,
+        id_imagenes_moviles: imageMovil.id // Usar el ID generado
+      }));
+
+      // Crear registros en 'imagenes_moviles_contados'
+      await prisma.imagenes_moviles_contados.createMany({
+        data: contadosData,
+      });
+    });
+
+    // Operación exitosa, puedes devolver algo o simplemente finalizar
   } catch (error) {
     console.error('Error al insertar la imagen:', error);
     throw error;
   }
 }
+
 
   export {
     saveImageCartelService,
