@@ -6,3 +6,7 @@ export interface Movil {
     x: number;
     y: number;
   }
+
+export interface ExtendedMovil extends Movil{
+  imagen: string;
+}

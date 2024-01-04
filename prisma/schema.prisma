@@ -192,6 +192,7 @@ model imagenes_moviles {
 model imagenes_moviles_contados {
   id                  Int              @id @default(autoincrement())
   id_imagenes_moviles Int
+  imagen              String           @db.VarChar(50)
   x                   Int
   y                   Int
   imagenes_moviles    imagenes_moviles @relation(fields: [id_imagenes_moviles], references: [id], onDelete: Cascade, map: "FK_imagenes_moviles_contados_imagenes_moviles")

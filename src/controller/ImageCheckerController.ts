@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getImagesService, saveImageCartelService, saveImageMovilService} from '../service/imageCheckerService';
+import { getCartelImagesService, getMovilImagesService, saveImageCartelService, saveImageMovilService} from '../service/imageCheckerService';
 import { openai } from '../config/openAi';
-import { ChatMessage, Movil } from '../interfaces/ImageChecker';
+import { ChatMessage, Movil } from '../interfaces/ImageCheckerInterfaces';
 
 const instruccionesCarteles = `
 Evalúa la probabilidad de que una imagen esté contenida dentro de otra y proporciona tu respuesta en formato JSON puro, sin incluir ningún tipo de marcado o anotaciones adicionales. Sigue las instrucciones detalladas a continuación:
@@ -24,25 +24,41 @@ Evita incluir cualquier marcado adicional como comillas adicionales, símbolos d
 
 
 const instruccionesMoviles = `
-Analiza la imagen proporcionada y determina la cantidad de teléfonos móviles presentes. Tu respuesta debe seguir el formato JSON especificado a continuación.
+Analiza las imágenes proporcionadas y determina la cantidad total de teléfonos móviles presentes, considerando todas las vistas desde diferentes ángulos. Tu respuesta debe seguir el formato JSON especificado a continuación.
 
-1. En el campo "status", indica el nivel de confianza en tu capacidad para identificar correctamente el número de móviles en la imagen. Utiliza uno de los siguientes valores para "status": "muy alta", "alta", "media", "baja", "muy baja", "ninguna" o "error". Elige "error" si no puedes determinar el nivel de confianza.
+1. En el campo "status", indica el nivel de confianza en tu capacidad para identificar correctamente el número total de móviles a través de todas las imágenes. Utiliza uno de los siguientes valores para "status": "muy alta", "alta", "media", "baja", "muy baja", "ninguna" o "error". Elige "error" si no puedes determinar el nivel de confianza.
 
-2. En el campo "moviles", proporciona un array. Cada elemento del array debe ser un objeto que represente un teléfono móvil detectado. Para cada móvil, incluye los siguientes campos:
-   - "x": Indica la coordenada horizontal (eje X) del centro del móvil en píxeles dentro de la imagen.
-   - "y": Indica la coordenada vertical (eje Y) del centro del móvil en píxeles dentro de la imagen.
+2. En el campo "moviles", proporciona un array de objetos, cada uno representando una imagen diferente. Para cada objeto, incluye:
+   - "imagen": La URL de la imagen analizada.
+   - "detecciones": Un array de objetos, cada uno representando un móvil detectado en esa imagen en particular. Para cada detección, incluye las coordenadas "x" e "y" del centro del móvil en píxeles.
+
+3. En el campo "total", proporciona una conclusión trás ver todos los ángulos de cuántos móviles parece haber en la mesa.
 
 Ejemplo de formato de respuesta:
 {
   "status": "alta",
   "moviles": [
-    {"x": 150, "y": 200},
-    {"x": 300, "y": 400}
-  ]
+    {
+      "imagen": "url de la imagen 1",
+      "detecciones": [
+        {"x": 100, "y": 100},
+        {"x": 200, "y": 200}
+      ]
+    },
+    {
+      "imagen": "url de la imagen 2",
+      "detecciones": [
+        {"x": 300, "y": 300},
+        {"x": 400, "y": 400}
+      ]
+    }
+  ],
+  "total": 2
 }
 
-Evita incluir cualquier marcado adicional como comillas adicionales, símbolos de código o anotaciones que no formen parte del formato JSON estándar.
+Por favor, asegúrate de que tu respuesta se adhiera estrictamente a este formato para garantizar una correcta interpretación y análisis de los datos proporcionados.
 `;
+
 
 
 /**
@@ -108,6 +124,13 @@ export async function postCartelImage(req: Request, res: Response) {
 }
 
 
+/**
+ * A function that receives a request and response object and handles the postImageMovil API endpoint.
+ *
+ * @param {Request} req - The request object containing the image files.
+ * @param {Response} res - The response object to send the API response.
+ * @return {Promise<void>} - A promise that resolves when the API response is sent.
+ */
 export async function postImageMovil(req: Request, res: Response){
  
   //validator
@@ -132,6 +155,7 @@ export async function postImageMovil(req: Request, res: Response){
   }
 
   const openAIObject = JSON.parse(openAiResult);
+
   const images = saveImageMovilService(openAIObject.status, openAIObject.moviles);
  
   return res.status(200).json(images);
@@ -142,16 +166,35 @@ export async function postImageMovil(req: Request, res: Response){
 
 
 
-export async function getImages(_req: Request, res: Response) {
+/**
+ * Retrieves images from the server and sends them as a JSON response.
+ *
+ * @param {Request} _req - The request object.
+ * @param {Response} res - The response object.
+ * @return {Promise<void>} - A promise that resolves when the response is sent.
+ */
+export async function getCartelImagenes(_req: Request, res: Response) {
   try {
    
-    const images = await getImagesService(); 
+    const images = await getCartelImagesService(); 
     return res.status(200).json(images);
   } catch (error) {
     console.error('Error al obtener las imagenes:', error);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
+
+export async function getMovilImagenes(_req: Request, res: Response) {
+  try {
+   
+    const images = await getMovilImagesService(); 
+    return res.status(200).json(images);
+  } catch (error) {
+    console.error('Error al obtener las imagenes:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
 
 
 /**
@@ -161,7 +204,7 @@ export async function getImages(_req: Request, res: Response) {
  * @param {Response} res - The HTTP response object.
  * @return {Promise<void>} - If the image is found, the image file is sent as a response. If the image is not found, a 404 status is sent with the message "Imagen no encontrada". If an error occurs during the retrieval, a 500 status is sent with the message "Error interno del servidor".
  */
-export async function getImage(req: Request, res: Response) {
+export async function getCartelImagen(req: Request, res: Response) {
   try {
     const image  = req.params.image;
       
@@ -186,6 +229,13 @@ export async function getImage(req: Request, res: Response) {
 
 
 
+/**
+ * Retrieves results from OpenAI based on a list of file paths and instructions.
+ *
+ * @param {string[]} filePaths - The paths to the files to be encoded as base64.
+ * @param {string} instrucciones - The instructions for the OpenAI chat.
+ * @return {Promise<string>} - The response message from OpenAI.
+ */
 async function getOpenAiResults(filePaths: string[], instrucciones: string) {
   // Codificar todas las imágenes en base64
   const base64Images = await Promise.all(filePaths.map(filePath => encodeImage(filePath)));
@@ -232,6 +282,13 @@ async function encodeImage(filePath: string) {
 }
 
 
+/**
+ * Checks if the given response from OpenAI is valid based on the specified response type.
+ *
+ * @param {string} response - The response from OpenAI.
+ * @param {'carteles' | 'moviles'} tipoRespuesta - The type of response ('carteles' or 'moviles').
+ * @return {boolean} True if the response is valid, false otherwise.
+ */
 function isValidOpenAiResponse(response: string, tipoRespuesta: 'carteles' | 'moviles'): boolean {
   try {
     const responseObject = JSON.parse(response);

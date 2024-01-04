@@ -1,7 +1,7 @@
 
 import {db} from '../config/database'
 import { imagenes_carteles } from '@prisma/client';
-import { Movil } from '../interfaces/ImageChecker';
+import { ExtendedMovil, Movil } from '../interfaces/ImageCheckerInterfaces';
 
 
 /**
@@ -33,7 +33,12 @@ async function saveImageCartelService(filename1: string, filaname2: string, prob
 
 
 
-async function getImagesService(): Promise<imagenes_carteles[]> {
+/**
+ * Retrieves the images service.
+ *
+ * @return {Promise<imagenes_carteles[]>} A promise that resolves to an array of `imagenes_carteles` objects representing the images.
+ */
+async function getCartelImagesService(): Promise<imagenes_carteles[]> {
   try {
     const images: imagenes_carteles[] = await db.imagenes_carteles.findMany(
       {
@@ -61,13 +66,29 @@ async function getImagesService(): Promise<imagenes_carteles[]> {
   }
 }
 
-async function saveImageMovilService(status: string, moviles_contados: Movil[]) {
+async function getMovilImagesService(){
+  try{
+    
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Saves an image for the mobile service.
+ *
+ * @param {string} status - The status of the image.
+ * @param {Movil[]} moviles_contados - An array of mobile objects.
+ * @return {Promise<void>} - A promise that resolves when the operation is successful.
+ */
+async function saveImageMovilService(status: string, moviles_contados: ExtendedMovil[]) {
   try {
     // Iniciar una transacción
     await db.$transaction(async (prisma) => {
       // Crear un registro en 'imagenes_moviles' y obtener el ID generado
       const imageMovil = await prisma.imagenes_moviles.create({
-        data: {       
+        data: {   
+           
           status: status,
           total: moviles_contados.length,
         },
@@ -96,6 +117,6 @@ async function saveImageMovilService(status: string, moviles_contados: Movil[]) 
   export {
     saveImageCartelService,
     saveImageMovilService,
-    getImagesService,
-
+    getCartelImagesService,
+    getMovilImagesService
   }
