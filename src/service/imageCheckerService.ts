@@ -11,14 +11,16 @@ import { imagenes_carteles } from '@prisma/client';
  * @param {string} similitud - The similitud value.
  * @return {Promise<any>} The created image cartel.
  */
-async function saveImageCartelService(filename1: string, filaname2: string, similitud:string) {
+
+async function saveImageCartelService(filename1: string, filaname2: string, probabilidad:string, comentario: string) {
   try{
   return await db.imagenes_carteles.create(
     {
       data: {       
         modelo: filename1,
         imagen: filaname2,
-        resultado: similitud
+        resultado: probabilidad,
+        comentario: comentario
       },
     }
   );
@@ -29,44 +31,46 @@ async function saveImageCartelService(filename1: string, filaname2: string, simi
 }
 
 
-/**
- * Retrieves images service.
- *
- * @return {Promise<{ imagen: imagenes_carteles, modelFile: string, imageFile: string }[]>} A promise that resolves to an array of objects containing image data and file paths.
- */
-async function getImagesService(): Promise<{ imagen: imagenes_carteles, file1: string, file2: string }[]> {
+
+async function getImagesService(): Promise<imagenes_carteles[]> {
   try {
-    const images = await db.imagenes_carteles.findMany();
+    const images: imagenes_carteles[] = await db.imagenes_carteles.findMany(
+      {
+        orderBy: {
+          timestamp: 'desc',
+        },
+      }
+    );
 
     const port = process.env.PORT || 3000;
     const backendName = process.env.BACKEND_NAME || 'localhost';
 
-    const imageFolderPath = `${backendName}:${port}/image`;
+    const imagePath = `${backendName}:${port}/image`;
 
+    // Mapeamos la matriz de imágenes para cambiar los atributos modelo e imagen por el path
+    const imagesWithFiles = images.map((image) => ({
+      ...image, // Copiamos todos los atributos existentes
+      modelo: `${imagePath}/${image.modelo}`, // Cambiamos el atributo modelo
+      imagen: `${imagePath}/${image.imagen}`, // Cambiamos el atributo imagen
+    }));
 
-   
-    const imagesWithFiles = images.map((image) => {
-      const file1 = `${imageFolderPath}/${image.modelo}`;
-      const file2 = `${imageFolderPath}/${image.imagen}`;
-
-      return {
-        imagen: image,
-        file1,
-        file2,
-      };
-    });
-    
     return imagesWithFiles;
   } catch (error) {
     throw error;
   }
-  
 }
 
-
+ async function saveImageMovilService() {
+  try{
+  } catch (error) {
+    console.error('Error al insertar la imagen:', error);
+    throw error;
+  }
+}
 
   export {
     saveImageCartelService,
+    saveImageMovilService,
     getImagesService,
 
   }

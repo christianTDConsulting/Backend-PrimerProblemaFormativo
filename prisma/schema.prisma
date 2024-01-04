@@ -173,9 +173,28 @@ model asistente {
 }
 
 model imagenes_carteles {
-  id        Int      @id @default(autoincrement())
-  modelo    String   @default("") @db.VarChar(50)
-  imagen    String   @unique(map: "Imagen2") @db.VarChar(50)
-  timestamp DateTime @default(now()) @db.Timestamp(0)
-  resultado String?  @db.VarChar(50)
+  id         Int      @id @default(autoincrement())
+  modelo     String   @default("") @db.VarChar(50)
+  imagen     String   @unique(map: "Imagen2") @db.VarChar(50)
+  timestamp  DateTime @default(now()) @db.Timestamp(0)
+  resultado  String?  @db.VarChar(50)
+  comentario String?  @db.Text
+}
+
+model imagenes_moviles {
+  id                        Int                         @id
+  timestamp                 DateTime                    @default(now()) @db.Date
+  status                    String                      @db.VarChar(50)
+  total                     Int
+  imagenes_moviles_contados imagenes_moviles_contados[]
+}
+
+model imagenes_moviles_contados {
+  id                  Int              @id
+  id_imagenes_moviles Int
+  x                   Int
+  y                   Int
+  imagenes_moviles    imagenes_moviles @relation(fields: [id_imagenes_moviles], references: [id], onDelete: Cascade, map: "FK_imagenes_moviles_contados_imagenes_moviles")
+
+  @@index([id_imagenes_moviles], map: "FK_imagenes_moviles_contados_imagenes_moviles")
 }

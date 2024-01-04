@@ -1,12 +1,13 @@
 import express from 'express';
-import upload from '../config/multer';
-import { getImages, postImage, getImage } from '../controller/ImageCheckerController';
+import {uploadCarteles, uploadMoviles} from '../config/multer';
+import { getImages, postCartelImage, getImage, postImageMovil} from '../controller/ImageCheckerController';
 
 
   
 const imageCheckerRouter = express.Router();
 
-imageCheckerRouter.post('/uploadImage', upload, postImage);
+imageCheckerRouter.post('/uploadCartelImage', uploadCarteles, postCartelImage);
+imageCheckerRouter.post('/uploadCartelHueco', uploadMoviles, postImageMovil);
 imageCheckerRouter.get('/images', getImages);
 imageCheckerRouter.get('/image/:image', getImage);
 
